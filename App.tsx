@@ -23,6 +23,8 @@ const LoadingFallback = () => (
 );
 
 const App: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+
   return (
     <HashRouter>
       <div className="flex h-screen bg-light-bg text-dark-text font-sans">
@@ -34,10 +36,17 @@ const App: React.FC = () => {
             {/* Other routes have the main layout - PUBLIC BY DEFAULT */}
             <Route path="/*" element={
               <>
-                <Sidebar />
-                <div className="flex-1 flex flex-col overflow-hidden">
-                  <Header />
-                  <main className="flex-1 overflow-x-hidden overflow-y-auto bg-light-bg p-6 md:p-8">
+                <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+                <div className="flex-1 flex flex-col overflow-hidden w-full relative">
+                  <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+                  {/* Overlay for mobile sidebar */}
+                  {isSidebarOpen && (
+                    <div 
+                      className="fixed inset-0 bg-black/50 z-20 md:hidden" 
+                      onClick={() => setIsSidebarOpen(false)}
+                    />
+                  )}
+                  <main className="flex-1 overflow-x-hidden overflow-y-auto bg-light-bg p-4 md:p-8">
                     <Suspense fallback={<LoadingFallback />}>
                       <Routes>
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />

@@ -18,29 +18,49 @@ const adminNavItems = [
     { path: '/verify-competency', label: 'Verifikasi Uji Kompetensi', icon: ICONS.document },
 ];
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const { isLoggedIn, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
       logout();
       navigate('/dashboard');
+      if (window.innerWidth < 768) setIsOpen(false);
   }
+
+  const handleLinkClick = () => {
+    if (window.innerWidth < 768) setIsOpen(false);
+  };
 
   const linkClasses = "flex items-center px-4 py-3 text-gray-300 hover:bg-secondary hover:text-white transition-colors duration-200 rounded-md";
   const activeLinkClasses = "bg-secondary text-white border-l-4 border-accent rounded-none";
 
   return (
-    <div className="hidden md:flex flex-col w-64 bg-primary text-white">
-      <div className="flex items-center justify-center h-20 border-b border-blue-800 gap-3">
-        <img src="/logo.svg" alt="SIWITA Logo" className="h-10 w-10 drop-shadow-md" />
-        <h1 className="text-2xl font-bold tracking-wider">SIWITA</h1>
+    <div className={`
+      fixed inset-y-0 left-0 z-30 w-64 bg-primary text-white transform transition-transform duration-300 ease-in-out flex flex-col
+      md:relative md:translate-x-0
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+    `}>
+      <div className="flex items-center justify-between px-4 h-20 border-b border-blue-800">
+        <div className="flex items-center justify-center gap-3 w-full">
+          <img src="/logo.svg" alt="SIWITA Logo" className="h-10 w-10 drop-shadow-md" />
+          <h1 className="text-2xl font-bold tracking-wider">SIWITA</h1>
+        </div>
+        <button onClick={() => setIsOpen(false)} className="md:hidden text-gray-300 hover:text-white focus:outline-none">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
       </div>
-      <nav className="flex-1 px-2 py-4 space-y-2">
+      <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
         {navItems.map(item => (
           <NavLink
             key={item.path}
             to={item.path}
+            onClick={handleLinkClick}
             className={({ isActive }) => `${linkClasses} ${isActive ? activeLinkClasses : ''}`}
           >
             {item.icon}
@@ -55,6 +75,7 @@ const Sidebar: React.FC = () => {
                      <NavLink
                         key={item.path}
                         to={item.path}
+                        onClick={handleLinkClick}
                         className={({ isActive }) => `${linkClasses} ${isActive ? activeLinkClasses : ''}`}
                     >
                         {item.icon}
@@ -71,7 +92,10 @@ const Sidebar: React.FC = () => {
                 <span className="ml-3">Logout</span>
              </button>
           )}
-          <p className="text-xs text-gray-400 mt-4">&copy; 2025. All rights reserved.</p>
+          <div className="text-xs text-gray-400 mt-4">
+            <p>Dev by Saiful Anwar</p>
+            <p>@ 2026 All Right Reserved</p>
+          </div>
       </div>
     </div>
   );
