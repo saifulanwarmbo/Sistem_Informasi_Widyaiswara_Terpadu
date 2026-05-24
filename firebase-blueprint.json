@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "WidyaiswaraProfile": {
+      "title": "WidyaiswaraProfile",
+      "description": "Profile data for a Widyaiswara",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "name": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "tier": { "type": "string", "enum": ["Widyaiswara Ahli Pertama", "Widyaiswara Ahli Muda", "Widyaiswara Ahli Madya", "Widyaiswara Ahli Utama"] },
+        "organization": { "type": "string" },
+        "creditPoints": { "type": "number" },
+        "nip": { "type": "string" },
+        "niwn": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "developmentHistory": { "type": "array" },
+        "performanceHistory": { "type": "array" },
+        "ownerId": { "type": "string", "description": "The UID of the user who created this profile" }
+      },
+      "required": ["name", "tier", "organization", "creditPoints", "nip", "niwn", "createdAt", "ownerId"]
+    },
+    "CompetencyRegistration": {
+      "title": "CompetencyRegistration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "profileId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "verified", "rejected"] },
+        "documents": { "type": "array" },
+        "submissionDate": { "type": "number" },
+        "verificationDate": { "type": "number" },
+        "adminNotes": { "type": "string" }
+      },
+      "required": ["profileId", "ownerId", "status", "documents", "submissionDate"]
+    },
+    "AppNotification": {
+      "title": "AppNotification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "message": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["userId", "message", "read", "createdAt"]
+    },
+    "AppUser": {
+      "title": "AppUser",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "widyaiswara"] },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "email", "role", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/profiles/{profileId}": {
+      "schema": { "$ref": "#/entities/WidyaiswaraProfile" },
+      "description": "Collection of Widyaiswara profiles"
+    },
+    "/competency_registrations/{regId}": {
+      "schema": { "$ref": "#/entities/CompetencyRegistration" },
+      "description": "Collection of competency test registrations"
+    },
+    "/notifications/{notifId}": {
+      "schema": { "$ref": "#/entities/AppNotification" },
+      "description": "Collection of user notifications"
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/AppUser" },
+      "description": "Collection of users and their roles"
+    }
+  }
+}

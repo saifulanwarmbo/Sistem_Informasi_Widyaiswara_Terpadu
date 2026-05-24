@@ -1,0 +1,186 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: profiles
+    // Document ID: auto-generated
+    // Fields:
+    //   - id: string
+    //   - name: string (required, length > 0)
+    //   - photoUrl: string (optional)
+    //   - tier: string (required, enum)
+    //   - organization: string (required, length > 0)
+    //   - creditPoints: number (required, >= 0)
+    //   - nip: string (required, length > 0)
+    //   - niwn: string (required, length > 0)
+    //   - createdAt: number (required, timestamp)
+    //   - developmentHistory: list (optional)
+    //   - performanceHistory: list (optional)
+    //   - ownerId: string (required, matches auth.uid)
+    //
+    // Collection: competency_registrations
+    // Document ID: auto-generated
+    // Fields:
+    //   - id: string
+    //   - profileId: string
+    //   - ownerId: string
+    //   - status: string (enum: pending, verified, rejected)
+    //   - documents: list
+    //   - submissionDate: number
+    //   - verificationDate: number (optional)
+    //   - adminNotes: string (optional)
+    //
+    // Collection: notifications
+    // Document ID: auto-generated
+    // Fields:
+    //   - id: string
+    //   - userId: string
+    //   - message: string
+    //   - read: boolean
+    //   - createdAt: number
+    //
+    // Collection: users
+    // Document ID: matches auth.uid
+    // Fields:
+    //   - id: string
+    //   - email: string
+    //   - role: string (enum: admin, widyaiswara)
+    //   - createdAt: number
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (request.auth.token.email == "saiful.anwarmbo@gmail.com" ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'));
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.ownerId;
+    }
+
+    function uidUnchanged() {
+      return !('ownerId' in request.resource.data) || request.resource.data.ownerId == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('ownerId' in request.resource.data) || request.resource.data.ownerId == resource.data.ownerId;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidString(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+        request.resource.data[field].size() >= minLen &&
+        request.resource.data[field].size() <= maxLen;
+    }
+
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+        (request.resource.data[field] is string &&
+        request.resource.data[field].size() >= minLen &&
+        request.resource.data[field].size() <= maxLen);
+    }
+
+    function isValidTier() {
+      let validTiers = ['Widyaiswara Ahli Pertama', 'Widyaiswara Ahli Muda', 'Widyaiswara Ahli Madya', 'Widyaiswara Ahli Utama'];
+      return request.resource.data.tier in validTiers;
+    }
+
+    function isValidProfile() {
+      return hasRequiredFields(['name', 'tier', 'organization', 'creditPoints', 'nip', 'niwn', 'createdAt', 'ownerId']) &&
+             isValidString('name', 1, 100) &&
+             isValidTier() &&
+             isValidString('organization', 1, 100) &&
+             request.resource.data.creditPoints is number &&
+             request.resource.data.creditPoints >= 0 &&
+             isValidString('nip', 1, 50) &&
+             isValidString('niwn', 1, 50) &&
+             request.resource.data.createdAt is number &&
+             isValidOptionalString('photoUrl', 0, 500) &&
+             (!( 'developmentHistory' in request.resource.data ) || request.resource.data.developmentHistory is list) &&
+             (!( 'performanceHistory' in request.resource.data ) || request.resource.data.performanceHistory is list);
+    }
+
+    function isValidRegistration() {
+      return hasRequiredFields(['profileId', 'ownerId', 'status', 'documents', 'submissionDate']) &&
+             request.resource.data.status in ['pending', 'verified', 'rejected'] &&
+             request.resource.data.documents is list &&
+             request.resource.data.submissionDate is number &&
+             (!( 'verificationDate' in request.resource.data ) || request.resource.data.verificationDate is number) &&
+             isValidOptionalString('adminNotes', 0, 1000);
+    }
+
+    function isValidNotification() {
+      return hasRequiredFields(['userId', 'message', 'read', 'createdAt']) &&
+             request.resource.data.userId is string &&
+             isValidString('message', 1, 1000) &&
+             request.resource.data.read is bool &&
+             request.resource.data.createdAt is number;
+    }
+
+    function isValidUser() {
+      return hasRequiredFields(['id', 'email', 'role', 'createdAt']) &&
+             request.resource.data.id == request.auth.uid &&
+             request.resource.data.email is string &&
+             request.resource.data.role in ['admin', 'widyaiswara'] &&
+             request.resource.data.createdAt is number;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      // Allow user to create their own record on first login, but they cannot make themselves admin unless they are the default admin
+      allow create: if isOwner(userId) && isValidUser() && 
+                    (request.resource.data.role == 'widyaiswara' || 
+                    (request.resource.data.role == 'admin' && request.auth.token.email == "saiful.anwarmbo@gmail.com"));
+      allow update: if isAdmin() && isValidUser();
+      allow delete: if isAdmin();
+    }
+
+    match /profiles/{profileId} {
+      // Allow anyone to read profiles
+      allow read: if true;
+      
+      // Allow creation if authenticated, data is valid, and ownerId matches auth.uid
+      allow create: if isAuthenticated() && isValidProfile() && request.resource.data.ownerId == request.auth.uid;
+      
+      // Allow update if user is owner OR user is admin
+      allow update: if (isDocOwner() || isAdmin()) && isValidProfile() && uidNotModified();
+      
+      // Allow delete if user is owner OR user is admin
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /competency_registrations/{regId} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && isValidRegistration() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isAdmin() && isValidRegistration(); // Only admins can update status
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      allow create: if isAdmin() && isValidNotification(); // Only admins can create notifications
+      allow update: if isAuthenticated() && request.auth.uid == resource.data.userId && isValidNotification(); // Users can mark as read
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+  }
+}
