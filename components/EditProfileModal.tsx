@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { WidyaiswaraProfile, JobTier, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
+import { WidyaiswaraProfile, JobTier, PromotionHistoryItem, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
+import PromotionHistoryInput from './PromotionHistoryInput';
 import DevelopmentHistoryInput from './DevelopmentHistoryInput';
 import PerformanceHistoryInput from './PerformanceHistoryInput';
 
@@ -22,6 +23,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
         organization: profile.organization,
         tier: profile.tier,
         creditPoints: profile.creditPoints,
+        promotionHistory: profile.promotionHistory || [],
         developmentHistory: profile.developmentHistory || [],
         performanceHistory: profile.performanceHistory || [],
       });
@@ -35,6 +37,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
     setFormData(prev => ({ ...prev, [name]: name === 'creditPoints' ? Number(value) : value }));
   };
 
+  const handlePromotionHistoryChange = (history: PromotionHistoryItem[]) => {
+      setFormData(prev => ({ ...prev, promotionHistory: history }));
+  };
+
   const handleDevHistoryChange = (history: DevelopmentHistoryItem[]) => {
       setFormData(prev => ({ ...prev, developmentHistory: history }));
   };
@@ -46,6 +52,12 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const finalData = { ...formData };
+
+    if (finalData.promotionHistory) {
+        finalData.promotionHistory = finalData.promotionHistory.filter(
+            item => item.year.trim() !== '' || item.newTier.trim() !== '' || item.notes.trim() !== ''
+        );
+    }
 
     if (finalData.developmentHistory) {
         finalData.developmentHistory = finalData.developmentHistory.filter(
@@ -97,6 +109,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
                     <input type="number" id="creditPoints" name="creditPoints" value={formData.creditPoints || 0} onChange={handleChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
                 </div>
             </div>
+            <PromotionHistoryInput
+                history={formData.promotionHistory || []}
+                onChange={handlePromotionHistoryChange}
+            />
             <DevelopmentHistoryInput
                 history={formData.developmentHistory || []}
                 onChange={handleDevHistoryChange}

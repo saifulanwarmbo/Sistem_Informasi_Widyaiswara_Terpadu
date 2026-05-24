@@ -1,5 +1,12 @@
 
 
+export interface PromotionHistoryItem {
+  id: string;
+  year: string;
+  newTier: string;
+  notes: string;
+}
+
 export interface DevelopmentHistoryItem {
   id: string;
   year: string;
@@ -31,6 +38,7 @@ export interface WidyaiswaraProfile {
   nip: string; // NIP = Nomor Induk Pegawai
   niwn: string; // NIWN = Nomor Induk Widyaiswara Nasional
   createdAt: number; // Timestamp of creation
+  promotionHistory?: PromotionHistoryItem[];
   developmentHistory?: DevelopmentHistoryItem[];
   performanceHistory?: PerformanceHistoryItem[];
   ownerId: string;

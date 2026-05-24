@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
 import { useAuth } from '../contexts/AuthContext';
-import { JobTier, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
+import { JobTier, PromotionHistoryItem, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
+import PromotionHistoryInput from '../components/PromotionHistoryInput';
 import DevelopmentHistoryInput from '../components/DevelopmentHistoryInput';
 import PerformanceHistoryInput from '../components/PerformanceHistoryInput';
 
@@ -20,6 +21,7 @@ const SelfRegistration: React.FC = () => {
   const [photoUrl, setPhotoUrl] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [promotionHistory, setPromotionHistory] = useState<PromotionHistoryItem[]>([]);
   const [developmentHistory, setDevelopmentHistory] = useState<DevelopmentHistoryItem[]>([]);
   const [performanceHistory, setPerformanceHistory] = useState<PerformanceHistoryItem[]>([]);
 
@@ -57,6 +59,10 @@ const SelfRegistration: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
+    const finalPromHistory = promotionHistory.filter(
+      item => item.year.trim() !== '' || item.newTier.trim() !== '' || item.notes.trim() !== ''
+    );
+
     const finalDevHistory = developmentHistory.filter(
       item => item.year.trim() !== '' || item.trainingName.trim() !== '' || item.organizer.trim() !== ''
     );
@@ -73,6 +79,7 @@ const SelfRegistration: React.FC = () => {
       tier, 
       creditPoints: Number(creditPoints), 
       photoUrl, 
+      promotionHistory: finalPromHistory,
       developmentHistory: finalDevHistory,
       performanceHistory: finalPerfHistory
     });
@@ -137,6 +144,8 @@ const SelfRegistration: React.FC = () => {
                     </div>
                 </div>
                 
+                <PromotionHistoryInput history={promotionHistory} onChange={setPromotionHistory} />
+
                 <DevelopmentHistoryInput history={developmentHistory} onChange={setDevelopmentHistory} />
 
                 <PerformanceHistoryInput history={performanceHistory} onChange={setPerformanceHistory} />
