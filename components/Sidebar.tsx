@@ -32,7 +32,8 @@ const Sidebar: React.FC = () => {
 
   return (
     <div className="hidden md:flex flex-col w-64 bg-primary text-white">
-      <div className="flex items-center justify-center h-20 border-b border-blue-800">
+      <div className="flex items-center justify-center h-20 border-b border-blue-800 gap-3">
+        <img src="/logo.svg" alt="SIWITA Logo" className="h-10 w-10 drop-shadow-md" />
         <h1 className="text-2xl font-bold tracking-wider">SIWITA</h1>
       </div>
       <nav className="flex-1 px-2 py-4 space-y-2">

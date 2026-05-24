@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { FirebaseError } from 'firebase/app';
 
 const Login: React.FC = () => {
   const [error, setError] = useState('');
@@ -14,9 +15,30 @@ const Login: React.FC = () => {
     try {
       await login();
       navigate('/dashboard');
-    } catch (err) {
-      console.error(err);
-      setError('Gagal masuk dengan Google. Silakan coba lagi.');
+    } catch (err: any) {
+      console.error("Login error details:", err);
+      
+      // Handle explicit Firebase Auth errors
+      if (err instanceof FirebaseError || err?.code) {
+        switch (err.code) {
+          case 'auth/unauthorized-domain':
+            setError(`Domain ini (${window.location.hostname}) belum diizinkan. Tambahkan domain ini ke Firebase Console > Authentication > Settings > Authorized domains.`);
+            break;
+          case 'auth/popup-closed-by-user':
+            setError('Login dibatalkan (Popup ditutup). Silakan coba lagi.');
+            break;
+          case 'auth/popup-blocked':
+            setError('Popup diblokir oleh browser. Izinkan popup untuk website ini dan coba lagi.');
+            break;
+          case 'auth/network-request-failed':
+            setError('Koneksi internet bermasalah. Periksa jaringan Anda.');
+            break;
+          default:
+            setError(`Gagal masuk dengan Google (${err.code}). Silakan coba lagi.`);
+        }
+      } else {
+        setError('Terjadi kesalahan yang tidak terduga. Silakan coba lagi.');
+      }
     } finally {
       setIsLoadingLogin(false);
     }
@@ -32,6 +54,9 @@ const Login: React.FC = () => {
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md p-8 space-y-8 bg-gray-900/40 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-700/50">
         <div className="text-center">
+          <div className="flex justify-center mb-4">
+            <img src="/logo.svg" alt="SIWITA Logo" className="h-20 w-20 drop-shadow-xl" />
+          </div>
           <h2 className="text-4xl font-bold text-white tracking-tight">
             Login <span className="text-accent">SIWITA</span>
           </h2>
@@ -41,7 +66,11 @@ const Login: React.FC = () => {
         </div>
         
         <div className="space-y-6">
-          {error && <p className="text-sm text-center text-red-400">{error}</p>}
+          {error && (
+            <div className="p-4 bg-red-900/50 border border-red-500/50 rounded-md">
+              <p className="text-sm text-center text-red-200">{error}</p>
+            </div>
+          )}
           <div>
             <button
               onClick={handleGoogleLogin}

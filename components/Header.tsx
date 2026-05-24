@@ -14,7 +14,11 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-white shadow-sm h-20 flex items-center justify-between px-6 relative z-20">
-      <h2 className="text-xl font-semibold text-gray-700">Sistem Informasi Widyaiswara Indonesia Terpadu</h2>
+      <div className="flex items-center gap-3">
+        <img src="/logo.svg" alt="SIWITA Logo" className="h-8 w-8 md:hidden" />
+        <h2 className="text-xl font-semibold text-gray-700 hidden sm:block">Sistem Informasi Widyaiswara Indonesia Terpadu</h2>
+        <h2 className="text-xl font-semibold text-gray-700 sm:hidden">SIWITA</h2>
+      </div>
       <div className="flex items-center space-x-4">
         {isLoggedIn ? (
           <>
