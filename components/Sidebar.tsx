@@ -16,6 +16,7 @@ const navItems = [
 const adminNavItems = [
     { path: '/input-data', label: 'Input Data', icon: ICONS.inputData },
     { path: '/verify-competency', label: 'Verifikasi Uji Kompetensi', icon: ICONS.document },
+    { path: '/manage-admins', label: 'Kelola Admin', icon: ICONS.users },
 ];
 
 interface SidebarProps {

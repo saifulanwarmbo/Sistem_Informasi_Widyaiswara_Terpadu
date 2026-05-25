@@ -15,6 +15,7 @@ const InputData = lazy(() => import('./pages/InputData'));
 const SelfRegistration = lazy(() => import('./pages/SelfRegistration'));
 const CompetencyTest = lazy(() => import('./pages/CompetencyTest'));
 const VerifyCompetency = lazy(() => import('./pages/VerifyCompetency'));
+const ManageAdmins = lazy(() => import('./pages/ManageAdmins'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-full w-full">
@@ -69,6 +70,11 @@ const App: React.FC = () => {
                         <Route path="/verify-competency" element={
                           <ProtectedRoute requireAdmin={true}>
                             <VerifyCompetency />
+                          </ProtectedRoute>
+                        } />
+                        <Route path="/manage-admins" element={
+                          <ProtectedRoute requireAdmin={true}>
+                            <ManageAdmins />
                           </ProtectedRoute>
                         } />
                       </Routes>
