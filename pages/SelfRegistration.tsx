@@ -55,7 +55,7 @@ const SelfRegistration: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
@@ -71,24 +71,27 @@ const SelfRegistration: React.FC = () => {
       item => item.year.trim() !== '' || item.performanceDescription.trim() !== ''
     );
 
-    addProfile({ 
-      name, 
-      nip, 
-      niwn, 
-      organization, 
-      tier, 
-      creditPoints: Number(creditPoints), 
-      photoUrl, 
-      promotionHistory: finalPromHistory,
-      developmentHistory: finalDevHistory,
-      performanceHistory: finalPerfHistory
-    });
-    
-    setTimeout(() => {
-        setIsSubmitting(false);
-        alert('Data Anda berhasil dikirim. Terima kasih telah mendaftar.');
-        navigate('/profiles');
-    }, 500);
+    try {
+      await addProfile({ 
+        name, 
+        nip, 
+        niwn, 
+        organization, 
+        tier, 
+        creditPoints: Number(creditPoints), 
+        photoUrl, 
+        promotionHistory: finalPromHistory,
+        developmentHistory: finalDevHistory,
+        performanceHistory: finalPerfHistory
+      });
+      setIsSubmitting(false);
+      alert('Data Anda berhasil dikirim. Terima kasih telah mendaftar.');
+      navigate('/profiles');
+    } catch (err: any) {
+      console.error(err);
+      setIsSubmitting(false);
+      alert('Gagal menyimpan data: ' + (err.message || 'Harap periksa izin akses Anda.'));
+    }
   };
 
   return (

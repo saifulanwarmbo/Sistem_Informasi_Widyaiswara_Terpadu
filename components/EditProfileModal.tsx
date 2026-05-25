@@ -16,6 +16,21 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
 
   useEffect(() => {
     if (profile) {
+      // Priority 1: Check localStorage for draft
+      const draftKey = `siwita_edit_draft_${profile.id}`;
+      const savedDraft = localStorage.getItem(draftKey);
+      
+      if (savedDraft) {
+        try {
+          const parsed = JSON.parse(savedDraft);
+          setFormData(parsed);
+          return; // Exit early if we loaded the draft
+        } catch (e) {
+          console.error('Error loading edit draft', e);
+        }
+      }
+
+      // Priority 2: Use actual profile data
       setFormData({
         name: profile.name,
         nip: profile.nip,
@@ -29,6 +44,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
       });
     }
   }, [profile]);
+
+  // Save to local storage periodically or on change
+  useEffect(() => {
+    if (profile && Object.keys(formData).length > 0) {
+      const draftKey = `siwita_edit_draft_${profile.id}`;
+      localStorage.setItem(draftKey, JSON.stringify(formData));
+    }
+  }, [formData, profile]);
 
   if (!isOpen || !profile) return null;
 
@@ -70,7 +93,17 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
             item => item.year.trim() !== '' || item.performanceDescription.trim() !== ''
         );
     }
+    if (profile) {
+      localStorage.removeItem(`siwita_edit_draft_${profile.id}`);
+    }
     onSave(finalData);
+  };
+
+  const handleCancel = () => {
+    if (profile) {
+      localStorage.removeItem(`siwita_edit_draft_${profile.id}`);
+    }
+    onClose();
   };
 
   return (
@@ -123,7 +156,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
             />
           </div>
           <div className="px-6 py-4 bg-gray-50 flex justify-end space-x-3">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary">
+            <button type="button" onClick={handleCancel} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary">
               Batal
             </button>
             <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">

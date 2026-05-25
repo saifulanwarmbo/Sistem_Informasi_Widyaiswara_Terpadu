@@ -106,7 +106,8 @@ service cloud.firestore {
     }
 
     function isValidProfile() {
-      return hasRequiredFields(['name', 'tier', 'organization', 'creditPoints', 'nip', 'niwn', 'createdAt', 'ownerId']) &&
+      return hasRequiredFields(['id', 'name', 'tier', 'organization', 'creditPoints', 'nip', 'niwn', 'createdAt', 'ownerId']) &&
+             request.resource.data.id is string &&
              isValidString('name', 1, 100) &&
              isValidTier() &&
              isValidString('organization', 1, 100) &&
@@ -115,7 +116,8 @@ service cloud.firestore {
              isValidString('nip', 1, 50) &&
              isValidString('niwn', 1, 50) &&
              request.resource.data.createdAt is number &&
-             isValidOptionalString('photoUrl', 0, 500) &&
+             isValidOptionalString('photoUrl', 0, 2000000) &&
+             (!( 'promotionHistory' in request.resource.data ) || request.resource.data.promotionHistory is list) &&
              (!( 'developmentHistory' in request.resource.data ) || request.resource.data.developmentHistory is list) &&
              (!( 'performanceHistory' in request.resource.data ) || request.resource.data.performanceHistory is list);
     }

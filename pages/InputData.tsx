@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
-import { JobTier, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
+import { JobTier, PromotionHistoryItem, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
+import PromotionHistoryInput from '../components/PromotionHistoryInput';
 import DevelopmentHistoryInput from '../components/DevelopmentHistoryInput';
 import PerformanceHistoryInput from '../components/PerformanceHistoryInput';
 
@@ -20,6 +21,38 @@ const InputData: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [developmentHistory, setDevelopmentHistory] = useState<DevelopmentHistoryItem[]>([]);
   const [performanceHistory, setPerformanceHistory] = useState<PerformanceHistoryItem[]>([]);
+  const [promotionHistory, setPromotionHistory] = useState<PromotionHistoryItem[]>([]);
+
+  // Auto-load draft from local storage
+  useEffect(() => {
+    const savedDraft = localStorage.getItem('siwita_input_draft');
+    if (savedDraft) {
+      try {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed.name) setName(parsed.name);
+        if (parsed.nip) setNip(parsed.nip);
+        if (parsed.niwn) setNiwn(parsed.niwn);
+        if (parsed.organization) setOrganization(parsed.organization);
+        if (parsed.tier) setTier(parsed.tier as JobTier);
+        if (parsed.creditPoints) setCreditPoints(parsed.creditPoints);
+        if (parsed.photoUrl) { setPhotoUrl(parsed.photoUrl); setPhotoPreview(parsed.photoUrl); }
+        if (parsed.promotionHistory) setPromotionHistory(parsed.promotionHistory);
+        if (parsed.developmentHistory) setDevelopmentHistory(parsed.developmentHistory);
+        if (parsed.performanceHistory) setPerformanceHistory(parsed.performanceHistory);
+      } catch (e) {
+        console.error('Error loading draft', e);
+      }
+    }
+  }, []);
+
+  // Auto-save draft to local storage
+  useEffect(() => {
+    const draft = {
+      name, nip, niwn, organization, tier, creditPoints, photoUrl,
+      promotionHistory, developmentHistory, performanceHistory
+    };
+    localStorage.setItem('siwita_input_draft', JSON.stringify(draft));
+  }, [name, nip, niwn, organization, tier, creditPoints, photoUrl, promotionHistory, developmentHistory, performanceHistory]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -34,10 +67,14 @@ const InputData: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
+    const finalPromHistory = promotionHistory.filter(
+      item => item.year.trim() !== '' || item.newTier.trim() !== '' || item.notes.trim() !== ''
+    );
+
     const finalDevHistory = developmentHistory.filter(
       item => item.year.trim() !== '' || item.trainingName.trim() !== '' || item.organizer.trim() !== ''
     );
@@ -46,23 +83,28 @@ const InputData: React.FC = () => {
       item => item.year.trim() !== '' || item.performanceDescription.trim() !== ''
     );
 
-    addProfile({ 
-      name, 
-      nip, 
-      niwn, 
-      organization, 
-      tier, 
-      creditPoints: Number(creditPoints), 
-      photoUrl, 
-      developmentHistory: finalDevHistory,
-      performanceHistory: finalPerfHistory 
-    });
-    
-    setTimeout(() => {
-        setIsSubmitting(false);
-        alert('Data Widyaiswara berhasil ditambahkan!');
-        navigate('/profiles');
-    }, 500);
+    try {
+      await addProfile({ 
+        name, 
+        nip, 
+        niwn, 
+        organization, 
+        tier, 
+        creditPoints: Number(creditPoints), 
+        photoUrl,
+        promotionHistory: finalPromHistory,
+        developmentHistory: finalDevHistory,
+        performanceHistory: finalPerfHistory 
+      });
+      setIsSubmitting(false);
+      localStorage.removeItem('siwita_input_draft');
+      alert('Data Widyaiswara berhasil ditambahkan!');
+      navigate('/profiles');
+    } catch (err: any) {
+      console.error(err);
+      setIsSubmitting(false);
+      alert('Gagal menambahkan data: ' + (err.message || 'Harap periksa izin akses Anda.'));
+    }
   };
 
   return (
@@ -117,6 +159,8 @@ const InputData: React.FC = () => {
                         </label>
                     </div>
                 </div>
+                
+                <PromotionHistoryInput history={promotionHistory} onChange={setPromotionHistory} />
 
                 <DevelopmentHistoryInput history={developmentHistory} onChange={setDevelopmentHistory} />
 
