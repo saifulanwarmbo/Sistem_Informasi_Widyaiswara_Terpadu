@@ -37,6 +37,8 @@ export interface WidyaiswaraProfile {
   creditPoints: number;
   nip: string; // NIP = Nomor Induk Pegawai
   niwn: string; // NIWN = Nomor Induk Widyaiswara Nasional
+  whatsappNumber?: string;
+  joinDate?: string;
   createdAt: number; // Timestamp of creation
   promotionHistory?: PromotionHistoryItem[];
   developmentHistory?: DevelopmentHistoryItem[];

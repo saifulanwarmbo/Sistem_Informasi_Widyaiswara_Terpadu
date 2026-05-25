@@ -143,7 +143,8 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                       <p><span className="font-semibold text-dark-text print:text-black">NIP:</span> {profile.nip}</p>
                       <p><span className="font-semibold text-dark-text print:text-black">NIWN:</span> {profile.niwn}</p>
                       <p><span className="font-semibold text-dark-text print:text-black">Angka Kredit:</span> <span className="text-primary font-bold print:text-black">{profile.creditPoints}</span></p>
-                      <p><span className="font-semibold text-dark-text print:text-black">Bergabung:</span> {new Date(profile.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                      {profile.whatsappNumber && <p><span className="font-semibold text-dark-text print:text-black">No. WA:</span> {profile.whatsappNumber}</p>}
+                      <p><span className="font-semibold text-dark-text print:text-black">Bergabung:</span> {profile.joinDate ? new Date(profile.joinDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date(profile.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                   </div>
               </div>
             </div>

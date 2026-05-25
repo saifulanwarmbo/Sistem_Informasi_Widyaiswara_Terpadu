@@ -38,6 +38,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
         organization: profile.organization,
         tier: profile.tier,
         creditPoints: profile.creditPoints,
+        whatsappNumber: profile.whatsappNumber || '',
+        joinDate: profile.joinDate || '',
         promotionHistory: profile.promotionHistory || [],
         developmentHistory: profile.developmentHistory || [],
         performanceHistory: profile.performanceHistory || [],
@@ -140,6 +142,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, pr
                 <div>
                     <label htmlFor="creditPoints" className="block text-sm font-medium text-gray-700">Angka Kredit</label>
                     <input type="number" id="creditPoints" name="creditPoints" value={formData.creditPoints || 0} onChange={handleChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
+                </div>
+                <div>
+                    <label htmlFor="whatsappNumber" className="block text-sm font-medium text-gray-700">Nomor WA Aktif</label>
+                    <input type="text" id="whatsappNumber" name="whatsappNumber" value={formData.whatsappNumber || ''} onChange={handleChange} placeholder="08xxxxxxxxxx" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
+                </div>
+                <div>
+                    <label htmlFor="joinDate" className="block text-sm font-medium text-gray-700">Tanggal Bergabung</label>
+                    <input type="date" id="joinDate" name="joinDate" value={formData.joinDate || ''} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
                 </div>
             </div>
             <PromotionHistoryInput

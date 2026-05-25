@@ -16,6 +16,8 @@ const InputData: React.FC = () => {
   const [organization, setOrganization] = useState('');
   const [tier, setTier] = useState<JobTier>(JobTier.AhliPertama);
   const [creditPoints, setCreditPoints] = useState(0);
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [joinDate, setJoinDate] = useState('');
   const [photoUrl, setPhotoUrl] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,6 +37,8 @@ const InputData: React.FC = () => {
         if (parsed.organization) setOrganization(parsed.organization);
         if (parsed.tier) setTier(parsed.tier as JobTier);
         if (parsed.creditPoints) setCreditPoints(parsed.creditPoints);
+        if (parsed.whatsappNumber) setWhatsappNumber(parsed.whatsappNumber);
+        if (parsed.joinDate) setJoinDate(parsed.joinDate);
         if (parsed.photoUrl) { setPhotoUrl(parsed.photoUrl); setPhotoPreview(parsed.photoUrl); }
         if (parsed.promotionHistory) setPromotionHistory(parsed.promotionHistory);
         if (parsed.developmentHistory) setDevelopmentHistory(parsed.developmentHistory);
@@ -48,11 +52,11 @@ const InputData: React.FC = () => {
   // Auto-save draft to local storage
   useEffect(() => {
     const draft = {
-      name, nip, niwn, organization, tier, creditPoints, photoUrl,
+      name, nip, niwn, organization, tier, creditPoints, whatsappNumber, joinDate, photoUrl,
       promotionHistory, developmentHistory, performanceHistory
     };
     localStorage.setItem('siwita_input_draft', JSON.stringify(draft));
-  }, [name, nip, niwn, organization, tier, creditPoints, photoUrl, promotionHistory, developmentHistory, performanceHistory]);
+  }, [name, nip, niwn, organization, tier, creditPoints, whatsappNumber, joinDate, photoUrl, promotionHistory, developmentHistory, performanceHistory]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -91,6 +95,8 @@ const InputData: React.FC = () => {
         organization, 
         tier, 
         creditPoints: Number(creditPoints), 
+        whatsappNumber,
+        joinDate,
         photoUrl,
         promotionHistory: finalPromHistory,
         developmentHistory: finalDevHistory,
@@ -138,6 +144,14 @@ const InputData: React.FC = () => {
                     <div>
                         <label htmlFor="creditPoints" className="block text-sm font-medium text-gray-700">Angka Kredit</label>
                         <input type="number" id="creditPoints" value={creditPoints} onChange={e => setCreditPoints(Number(e.target.value))} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
+                    </div>
+                    <div>
+                        <label htmlFor="whatsappNumber" className="block text-sm font-medium text-gray-700">Nomor WA Aktif</label>
+                        <input type="text" id="whatsappNumber" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} placeholder="08xxxxxxxxxx" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
+                    </div>
+                    <div>
+                        <label htmlFor="joinDate" className="block text-sm font-medium text-gray-700">Tanggal Bergabung</label>
+                        <input type="date" id="joinDate" value={joinDate} onChange={e => setJoinDate(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
                     </div>
                 </div>
 
