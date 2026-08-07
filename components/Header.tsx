@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCompetency } from '../contexts/CompetencyContext';
 import { ICONS } from '../constants';
+import logoLan from '../assets/logo-lan.png';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -25,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           </svg>
         </button>
         <div className="bg-white px-2 py-1 rounded-md shadow-sm md:hidden shrink-0">
-          <img src="/logo-lan.png" alt="Logo LAN RI" className="h-7 w-auto object-contain" />
+          <img src={logoLan} alt="Logo LAN RI" className="h-7 w-auto object-contain" />
         </div>
         <h2 className="text-xl font-semibold text-gray-700 hidden sm:block md:hidden lg:block whitespace-nowrap overflow-hidden text-ellipsis ml-2">Sistem Informasi Widyaiswara Indonesia Terpadu</h2>
         <h2 className="text-xl font-semibold text-gray-700 sm:hidden md:block lg:hidden ml-2">SIWITA</h2>

@@ -5,6 +5,8 @@ import { FirebaseError } from 'firebase/app';
 import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 
+import logoLan from '../assets/logo-lan.png';
+
 const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
@@ -73,7 +75,7 @@ const Login: React.FC = () => {
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <div className="bg-white px-6 py-4 rounded-xl shadow-2xl border-4 border-white/20 ring-4 ring-primary/30 inline-block">
-              <img src="/logo-lan.png" alt="Logo LAN RI" className="h-16 md:h-20 w-auto object-contain" />
+              <img src={logoLan} alt="Logo LAN RI" className="h-16 md:h-20 w-auto object-contain" />
             </div>
           </div>
           <h2 className="text-4xl font-bold text-white tracking-tight">

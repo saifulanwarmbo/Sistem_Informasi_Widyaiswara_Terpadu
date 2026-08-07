@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ICONS } from '../constants';
 import { useAuth } from '../contexts/AuthContext';
+import logoLan from '../assets/logo-lan.png';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: ICONS.dashboard },
@@ -51,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       <div className="flex items-center justify-between px-4 h-20 border-b border-blue-800">
         <div className="flex items-center justify-center gap-3 w-full">
           <div className="bg-white px-2 py-1.5 rounded-md shadow-md shrink-0">
-            <img src="/logo-lan.png" alt="Logo LAN RI" className="h-8 w-auto object-contain" />
+            <img src={logoLan} alt="Logo LAN RI" className="h-8 w-auto object-contain" />
           </div>
           <h1 className="text-2xl font-bold tracking-wider">SIWITA</h1>
         </div>
