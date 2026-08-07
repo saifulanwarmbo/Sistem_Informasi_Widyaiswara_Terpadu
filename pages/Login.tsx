@@ -72,8 +72,8 @@ const Login: React.FC = () => {
       <div className="relative z-10 w-full max-w-md p-8 space-y-8 bg-gray-900/40 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-700/50">
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <div className="bg-white p-3 rounded-full shadow-2xl border-4 border-white/20 ring-4 ring-primary/30 inline-block">
-              <img src="/logo-lan.png" alt="SIWITA Logo" className="h-24 w-24 object-contain" />
+            <div className="bg-white px-6 py-4 rounded-xl shadow-2xl border-4 border-white/20 ring-4 ring-primary/30 inline-block">
+              <img src="/logo-lan.png" alt="Logo LAN RI" className="h-16 md:h-20 w-auto object-contain" />
             </div>
           </div>
           <h2 className="text-4xl font-bold text-white tracking-tight">

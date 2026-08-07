@@ -50,8 +50,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     `}>
       <div className="flex items-center justify-between px-4 h-20 border-b border-blue-800">
         <div className="flex items-center justify-center gap-3 w-full">
-          <div className="bg-white p-1.5 rounded-full shadow-md">
-            <img src="/logo-lan.png" alt="SIWITA Logo" className="h-9 w-9 object-contain" />
+          <div className="bg-white px-2 py-1.5 rounded-md shadow-md shrink-0">
+            <img src="/logo-lan.png" alt="Logo LAN RI" className="h-8 w-auto object-contain" />
           </div>
           <h1 className="text-2xl font-bold tracking-wider">SIWITA</h1>
         </div>
