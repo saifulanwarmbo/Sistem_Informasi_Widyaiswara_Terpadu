@@ -6,6 +6,7 @@ import { JobTier, PromotionHistoryItem, DevelopmentHistoryItem, PerformanceHisto
 import PromotionHistoryInput from '../components/PromotionHistoryInput';
 import DevelopmentHistoryInput from '../components/DevelopmentHistoryInput';
 import PerformanceHistoryInput from '../components/PerformanceHistoryInput';
+import { compressImage } from '../utils/imageCompression';
 
 const SelfRegistration: React.FC = () => {
   const navigate = useNavigate();
@@ -46,16 +47,29 @@ const SelfRegistration: React.FC = () => {
     );
   }
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setPhotoPreview(result);
-        setPhotoUrl(result);
-      };
-      reader.readAsDataURL(file);
+      
+      // Check original file size. If it's already small enough, we can still try to compress it.
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Ukuran foto terlalu besar (maksimal 5MB sebelum kompresi).");
+        return;
+      }
+
+      try {
+        const compressedBase64 = await compressImage(file, 400, 400, 0.7);
+        // Ensure the base64 string is < 1MB (approx 1,000,000 characters)
+        if (compressedBase64.length > 900000) {
+           alert("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.");
+           return;
+        }
+        setPhotoPreview(compressedBase64);
+        setPhotoUrl(compressedBase64);
+      } catch (error) {
+        console.error("Error compressing image:", error);
+        alert("Gagal memproses foto. Pastikan format file didukung (JPG/PNG).");
+      }
     }
   };
 
