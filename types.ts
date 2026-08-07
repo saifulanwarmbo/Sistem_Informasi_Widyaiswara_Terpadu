@@ -5,6 +5,9 @@ export interface PromotionHistoryItem {
   year: string;
   newTier: string;
   notes: string;
+  creditPoints?: number;
+  documentBase64?: string;
+  documentName?: string;
 }
 
 export interface DevelopmentHistoryItem {
@@ -12,6 +15,9 @@ export interface DevelopmentHistoryItem {
   year: string;
   trainingName: string;
   organizer: string;
+  creditPoints?: number;
+  documentBase64?: string;
+  documentName?: string;
 }
 
 export interface PerformanceHistoryItem {
@@ -90,5 +96,31 @@ export interface AppUser {
   id: string;
   email: string;
   role: UserRole;
+  createdAt: number;
+}
+
+export interface AuditLog {
+  id: string;
+  adminId: string;
+  adminEmail: string;
+  action: string;
+  targetId: string;
+  details?: string;
+  timestamp: number;
+}
+
+export interface DevelopmentResource {
+  id: string;
+  title: string;
+  description: string;
+  link: string;
+  createdAt: number;
+}
+
+export interface Agenda {
+  id: string;
+  title: string;
+  date: number;
+  location: string;
   createdAt: number;
 }

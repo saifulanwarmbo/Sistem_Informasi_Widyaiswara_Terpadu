@@ -3,6 +3,7 @@ import { WidyaiswaraProfile, JobTier, Organization } from '../types';
 import { db } from '../firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
+import { logAdminAction } from '../utils/auditLogger';
 
 // Helper function to recalculate organization data based on current profiles
 const calculateOrganizations = (profiles: WidyaiswaraProfile[], initialOrgs: Organization[]): Organization[] => {
@@ -77,7 +78,7 @@ const WidyaiswaraContext = createContext<WidyaiswaraContextType | undefined>(und
 export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [profiles, setProfiles] = useState<WidyaiswaraProfile[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, isAdmin } = useAuth();
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'profiles'), (snapshot) => {
@@ -113,6 +114,9 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
     
     try {
       await setDoc(doc(db, 'profiles', newId), newProfile);
+      if (isAdmin && user) {
+          await logAdminAction(user.uid, user.email || 'Unknown', 'CREATE_PROFILE', newId, `Created profile for ${newProfile.name}`);
+      }
     } catch (error) {
       console.error("Error adding profile:", error);
       throw error;
@@ -122,6 +126,9 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
   const deleteProfile = async (id: string) => {
     try {
       await deleteDoc(doc(db, 'profiles', id));
+      if (isAdmin && user) {
+          await logAdminAction(user.uid, user.email || 'Unknown', 'DELETE_PROFILE', id, 'Deleted profile');
+      }
     } catch (error) {
       console.error("Error deleting profile:", error);
       throw error;
@@ -131,6 +138,9 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
   const updateProfile = async (id: string, updatedData: Partial<Omit<WidyaiswaraProfile, 'id' | 'ownerId'>>) => {
     try {
       await updateDoc(doc(db, 'profiles', id), updatedData);
+      if (isAdmin && user) {
+          await logAdminAction(user.uid, user.email || 'Unknown', 'UPDATE_PROFILE', id, `Updated profile fields: ${Object.keys(updatedData).join(', ')}`);
+      }
     } catch (error) {
       console.error("Error updating profile:", error);
       throw error;

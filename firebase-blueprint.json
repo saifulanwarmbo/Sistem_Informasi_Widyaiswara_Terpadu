@@ -5,76 +5,293 @@
       "description": "Profile data for a Widyaiswara",
       "type": "object",
       "properties": {
-        "id": { "type": "string", "description": "Unique identifier" },
-        "name": { "type": "string" },
-        "photoUrl": { "type": "string" },
-        "tier": { "type": "string", "enum": ["Widyaiswara Ahli Pertama", "Widyaiswara Ahli Muda", "Widyaiswara Ahli Madya", "Widyaiswara Ahli Utama"] },
-        "organization": { "type": "string" },
-        "creditPoints": { "type": "number" },
-        "nip": { "type": "string" },
-        "niwn": { "type": "string" },
-        "createdAt": { "type": "number" },
-        "developmentHistory": { "type": "array" },
-        "performanceHistory": { "type": "array" },
-        "ownerId": { "type": "string", "description": "The UID of the user who created this profile" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        "name": {
+          "type": "string"
+        },
+        "photoUrl": {
+          "type": "string"
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "Widyaiswara Ahli Pertama",
+            "Widyaiswara Ahli Muda",
+            "Widyaiswara Ahli Madya",
+            "Widyaiswara Ahli Utama"
+          ]
+        },
+        "organization": {
+          "type": "string"
+        },
+        "creditPoints": {
+          "type": "number"
+        },
+        "nip": {
+          "type": "string"
+        },
+        "niwn": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "number"
+        },
+        "developmentHistory": {
+          "type": "array"
+        },
+        "performanceHistory": {
+          "type": "array"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "The UID of the user who created this profile"
+        }
       },
-      "required": ["name", "tier", "organization", "creditPoints", "nip", "niwn", "createdAt", "ownerId"]
+      "required": [
+        "name",
+        "tier",
+        "organization",
+        "creditPoints",
+        "nip",
+        "niwn",
+        "createdAt",
+        "ownerId"
+      ]
     },
     "CompetencyRegistration": {
       "title": "CompetencyRegistration",
       "type": "object",
       "properties": {
-        "id": { "type": "string" },
-        "profileId": { "type": "string" },
-        "ownerId": { "type": "string" },
-        "status": { "type": "string", "enum": ["pending", "verified", "rejected"] },
-        "documents": { "type": "array" },
-        "submissionDate": { "type": "number" },
-        "verificationDate": { "type": "number" },
-        "adminNotes": { "type": "string" }
+        "id": {
+          "type": "string"
+        },
+        "profileId": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "verified",
+            "rejected"
+          ]
+        },
+        "documents": {
+          "type": "array"
+        },
+        "submissionDate": {
+          "type": "number"
+        },
+        "verificationDate": {
+          "type": "number"
+        },
+        "adminNotes": {
+          "type": "string"
+        }
       },
-      "required": ["profileId", "ownerId", "status", "documents", "submissionDate"]
+      "required": [
+        "profileId",
+        "ownerId",
+        "status",
+        "documents",
+        "submissionDate"
+      ]
     },
     "AppNotification": {
       "title": "AppNotification",
       "type": "object",
       "properties": {
-        "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "message": { "type": "string" },
-        "read": { "type": "boolean" },
-        "createdAt": { "type": "number" }
+        "id": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "read": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "number"
+        }
       },
-      "required": ["userId", "message", "read", "createdAt"]
+      "required": [
+        "userId",
+        "message",
+        "read",
+        "createdAt"
+      ]
     },
     "AppUser": {
       "title": "AppUser",
       "type": "object",
       "properties": {
-        "id": { "type": "string" },
-        "email": { "type": "string" },
-        "role": { "type": "string", "enum": ["admin", "widyaiswara"] },
-        "createdAt": { "type": "number" }
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "admin",
+            "widyaiswara"
+          ]
+        },
+        "createdAt": {
+          "type": "number"
+        }
       },
-      "required": ["id", "email", "role", "createdAt"]
+      "required": [
+        "id",
+        "email",
+        "role",
+        "createdAt"
+      ]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Audit log for tracking admin actions",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "adminId": {
+          "type": "string"
+        },
+        "adminEmail": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "targetId": {
+          "type": "string"
+        },
+        "details": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "adminId",
+        "adminEmail",
+        "action",
+        "targetId",
+        "timestamp"
+      ]
+    },
+    "DevelopmentResource": {
+      "title": "DevelopmentResource",
+      "description": "Resource for Widyaiswara development",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "link": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "link",
+        "createdAt"
+      ]
+    },
+    "Agenda": {
+      "title": "Agenda",
+      "description": "Upcoming agenda or event",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "date": {
+          "type": "number"
+        },
+        "location": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "title",
+        "date",
+        "location",
+        "createdAt"
+      ]
     }
   },
   "firestore": {
     "/profiles/{profileId}": {
-      "schema": { "$ref": "#/entities/WidyaiswaraProfile" },
+      "schema": {
+        "$ref": "#/entities/WidyaiswaraProfile"
+      },
       "description": "Collection of Widyaiswara profiles"
     },
     "/competency_registrations/{regId}": {
-      "schema": { "$ref": "#/entities/CompetencyRegistration" },
+      "schema": {
+        "$ref": "#/entities/CompetencyRegistration"
+      },
       "description": "Collection of competency test registrations"
     },
     "/notifications/{notifId}": {
-      "schema": { "$ref": "#/entities/AppNotification" },
+      "schema": {
+        "$ref": "#/entities/AppNotification"
+      },
       "description": "Collection of user notifications"
     },
     "/users/{userId}": {
-      "schema": { "$ref": "#/entities/AppUser" },
+      "schema": {
+        "$ref": "#/entities/AppUser"
+      },
       "description": "Collection of users and their roles"
+    },
+    "/auditLogs/{logId}": {
+      "schema": {
+        "$ref": "#/entities/AuditLog"
+      },
+      "description": "Collection of audit logs for admin actions"
+    },
+    "/developmentResources/{resourceId}": {
+      "schema": {
+        "$ref": "#/entities/DevelopmentResource"
+      },
+      "description": "Collection of development resources"
+    },
+    "/agendas/{agendaId}": {
+      "schema": {
+        "$ref": "#/entities/Agenda"
+      },
+      "description": "Collection of upcoming agendas"
     }
   }
 }

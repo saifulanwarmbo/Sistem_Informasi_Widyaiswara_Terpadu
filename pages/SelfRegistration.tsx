@@ -9,7 +9,7 @@ import PerformanceHistoryInput from '../components/PerformanceHistoryInput';
 
 const SelfRegistration: React.FC = () => {
   const navigate = useNavigate();
-  const { addProfile } = useWidyaiswara();
+  const { addProfile, profiles } = useWidyaiswara();
   const { isLoggedIn } = useAuth();
 
   const [name, setName] = useState('');
@@ -26,6 +26,8 @@ const SelfRegistration: React.FC = () => {
   const [promotionHistory, setPromotionHistory] = useState<PromotionHistoryItem[]>([]);
   const [developmentHistory, setDevelopmentHistory] = useState<DevelopmentHistoryItem[]>([]);
   const [performanceHistory, setPerformanceHistory] = useState<PerformanceHistoryItem[]>([]);
+
+  const isNipExists = profiles.some(p => p.nip === nip && p.nip.trim() !== '');
 
   if (!isLoggedIn) {
     return (
@@ -110,7 +112,12 @@ const SelfRegistration: React.FC = () => {
                     </div>
                     <div>
                         <label htmlFor="nip" className="block text-sm font-medium text-gray-700">NIP</label>
-                        <input type="text" id="nip" value={nip} onChange={e => setNip(e.target.value)} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
+                        <input type="text" id="nip" value={nip} onChange={e => setNip(e.target.value)} required className={`mt-1 block w-full px-3 py-2 border ${isNipExists ? 'border-red-500 ring-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm`} />
+                        {isNipExists && (
+                            <p className="mt-2 text-sm text-red-600">
+                                Data dengan NIP ini telah ada dalam sistem. Silakan menuju <Link to="/profiles" className="font-semibold underline hover:text-red-800">Profil Widyaiswara</Link> untuk mengedit atau menambahkan data.
+                            </p>
+                        )}
                     </div>
                      <div>
                         <label htmlFor="niwn" className="block text-sm font-medium text-gray-700">NIWN</label>
@@ -166,7 +173,7 @@ const SelfRegistration: React.FC = () => {
                 <PerformanceHistoryInput history={performanceHistory} onChange={setPerformanceHistory} />
 
                  <div className="pt-4 flex justify-end">
-                    <button type="submit" disabled={isSubmitting} className="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary disabled:bg-gray-400">
+                    <button type="submit" disabled={isSubmitting || isNipExists} className="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary disabled:bg-gray-400">
                         {isSubmitting ? 'Mengirim...' : 'Kirim Data'}
                     </button>
                 </div>

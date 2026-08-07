@@ -24,9 +24,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <img src="/logo.svg" alt="SIWITA Logo" className="h-8 w-8 md:hidden" />
-        <h2 className="text-xl font-semibold text-gray-700 hidden sm:block md:hidden lg:block whitespace-nowrap overflow-hidden text-ellipsis">Sistem Informasi Widyaiswara Indonesia Terpadu</h2>
-        <h2 className="text-xl font-semibold text-gray-700 sm:hidden md:block lg:hidden">SIWITA</h2>
+        <div className="bg-white p-1 rounded-full shadow-sm md:hidden shrink-0">
+          <img src="/logo-lan.png" alt="SIWITA Logo" className="h-8 w-8 object-contain" />
+        </div>
+        <h2 className="text-xl font-semibold text-gray-700 hidden sm:block md:hidden lg:block whitespace-nowrap overflow-hidden text-ellipsis ml-2">Sistem Informasi Widyaiswara Indonesia Terpadu</h2>
+        <h2 className="text-xl font-semibold text-gray-700 sm:hidden md:block lg:hidden ml-2">SIWITA</h2>
       </div>
       <div className="flex items-center space-x-4">
         {isLoggedIn ? (

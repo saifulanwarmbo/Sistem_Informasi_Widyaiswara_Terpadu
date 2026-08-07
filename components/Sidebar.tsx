@@ -6,10 +6,10 @@ import { useAuth } from '../contexts/AuthContext';
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: ICONS.dashboard },
   { path: '/profiles', label: 'Profil Widyaiswara', icon: ICONS.profiles },
+  { path: '/self-registration', label: 'Registrasi Mandiri', icon: ICONS.selfRegister },
   { path: '/job-tiers', label: 'Jenjang Jabatan', icon: ICONS.tiers },
   { path: '/organizations', label: 'Instansi', icon: ICONS.organizations },
   { path: '/development-hub', label: 'Pengembangan Profesi', icon: ICONS.development },
-  { path: '/self-registration', label: 'Registrasi Mandiri', icon: ICONS.selfRegister },
   { path: '/competency-test', label: 'Uji Kompetensi', icon: ICONS.document },
 ];
 
@@ -17,6 +17,7 @@ const adminNavItems = [
     { path: '/input-data', label: 'Input Data', icon: ICONS.inputData },
     { path: '/verify-competency', label: 'Verifikasi Uji Kompetensi', icon: ICONS.document },
     { path: '/manage-admins', label: 'Kelola Admin', icon: ICONS.users },
+    { path: '/audit-logs', label: 'Log Audit', icon: ICONS.chart },
 ];
 
 interface SidebarProps {
@@ -49,7 +50,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     `}>
       <div className="flex items-center justify-between px-4 h-20 border-b border-blue-800">
         <div className="flex items-center justify-center gap-3 w-full">
-          <img src="/logo.svg" alt="SIWITA Logo" className="h-10 w-10 drop-shadow-md" />
+          <div className="bg-white p-1.5 rounded-full shadow-md">
+            <img src="/logo-lan.png" alt="SIWITA Logo" className="h-9 w-9 object-contain" />
+          </div>
           <h1 className="text-2xl font-bold tracking-wider">SIWITA</h1>
         </div>
         <button onClick={() => setIsOpen(false)} className="md:hidden text-gray-300 hover:text-white focus:outline-none">

@@ -62,7 +62,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, onDelete, o
           show: { opacity: 1, y: 0 }
         }}
         whileHover={{ y: -5, transition: { duration: 0.2 } }}
-        className="relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full cursor-pointer"
+        className="group relative bg-white rounded-lg shadow-md overflow-visible hover:shadow-lg transition-shadow duration-300 flex flex-col h-full cursor-pointer"
         onClick={() => onViewDetails?.(profile)}
         role="button"
         tabIndex={0}
@@ -73,6 +73,26 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, onDelete, o
             }
         }}
     >
+      {/* Tooltip */}
+      <div className="absolute left-1/2 -top-2 transform -translate-x-1/2 -translate-y-full w-64 bg-gray-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 shadow-xl pointer-events-none">
+        <div className="font-semibold mb-2 border-b border-gray-700 pb-1">Ringkasan Kompetensi</div>
+        {profile.performanceHistory && profile.performanceHistory.length > 0 ? (
+          <ul className="list-disc pl-4 space-y-1">
+            {[...profile.performanceHistory].sort((a, b) => (parseInt(b.year, 10) || 0) - (parseInt(a.year, 10) || 0)).slice(0, 3).map(item => (
+              <li key={item.id} className="truncate" title={item.performanceDescription}>
+                {item.performanceDescription} ({item.year})
+              </li>
+            ))}
+            {profile.performanceHistory.length > 3 && (
+              <li className="text-gray-400 italic">...dan {profile.performanceHistory.length - 3} lainnya</li>
+            )}
+          </ul>
+        ) : (
+          <div className="text-gray-400 italic">Belum ada data kompetensi</div>
+        )}
+        <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-gray-900"></div>
+      </div>
+
       {isAdmin && (
         <div className="absolute top-2 right-2 flex space-x-1 z-10">
           <button 
@@ -156,7 +176,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, onDelete, o
                 )}
                 {latestPerformance && (
                 <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kinerja Terakhir</p>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kompetensi Terakhir</p>
                     <p className="text-sm text-medium-text truncate" title={`${latestPerformance.performanceDescription} (${latestPerformance.year})`}>
                     {latestPerformance.performanceDescription} ({latestPerformance.year})
                     </p>

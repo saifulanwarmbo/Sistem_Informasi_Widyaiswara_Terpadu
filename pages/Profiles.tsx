@@ -16,18 +16,25 @@ const Profiles: React.FC = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTier, setSelectedTier] = useState<JobTier | 'All'>('All');
+  const [selectedOrganization, setSelectedOrganization] = useState<string>('All');
   const [editingProfile, setEditingProfile] = useState<WidyaiswaraProfile | null>(null);
   const [viewingProfile, setViewingProfile] = useState<WidyaiswaraProfile | null>(null);
   const [deletingProfile, setDeletingProfile] = useState<WidyaiswaraProfile | null>(null);
+
+  const uniqueOrganizations = useMemo(() => {
+    const orgs = new Set(profiles.map(p => p.organization).filter(Boolean));
+    return Array.from(orgs).sort();
+  }, [profiles]);
 
   const filteredProfiles = useMemo(() => {
     return profiles.filter(profile => {
       const nameMatch = profile.name.toLowerCase().includes(searchTerm.toLowerCase());
       const organizationMatch = profile.organization.toLowerCase().includes(searchTerm.toLowerCase());
       const tierMatch = selectedTier === 'All' || profile.tier === selectedTier;
-      return (nameMatch || organizationMatch) && tierMatch;
+      const orgFilterMatch = selectedOrganization === 'All' || profile.organization === selectedOrganization;
+      return (nameMatch || organizationMatch) && tierMatch && orgFilterMatch;
     });
-  }, [searchTerm, selectedTier, profiles]);
+  }, [searchTerm, selectedTier, selectedOrganization, profiles]);
   
   const handleSaveProfile = (updatedData: Partial<Omit<WidyaiswaraProfile, 'id'>>) => {
     if (editingProfile) {
@@ -44,7 +51,7 @@ const Profiles: React.FC = () => {
 
     const headers = [
         "ID", "Nama", "NIP", "NIWN", "Jenjang Jabatan", "Instansi", 
-        "Angka Kredit", "Tanggal Dibuat", "Riwayat Pengembangan", "Riwayat Kinerja"
+        "Angka Kredit", "Tanggal Dibuat", "Riwayat Pengembangan", "Riwayat Kompetensi"
     ];
 
     const escapeCsvCell = (cellData: any): string => {
@@ -57,14 +64,14 @@ const Profiles: React.FC = () => {
 
     const formatDevelopmentHistory = (history: DevelopmentHistoryItem[] | undefined): string => {
         if (!history || history.length === 0) return "";
-        return history.map(h => 
+        return [...history].sort((a, b) => (parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0)).map(h => 
             `Tahun: ${h.year}, Pelatihan: ${h.trainingName}, Penyelenggara: ${h.organizer}`
         ).join(" | ");
     };
 
     const formatPerformanceHistory = (history: PerformanceHistoryItem[] | undefined): string => {
         if (!history || history.length === 0) return "";
-        return history.map(p => 
+        return [...history].sort((a, b) => (parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0)).map(p => 
             `Tahun: ${p.year}, Keterangan: ${p.performanceDescription}, Catatan: ${p.notes || ''}`
         ).join(" | ");
     };
@@ -143,6 +150,16 @@ const Profiles: React.FC = () => {
             <option value="All">Semua Jenjang</option>
             {Object.values(JobTier).map(tier => (
               <option key={tier} value={tier}>{tier}</option>
+            ))}
+          </select>
+          <select
+            className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary w-full md:w-auto"
+            value={selectedOrganization}
+            onChange={(e) => setSelectedOrganization(e.target.value)}
+          >
+            <option value="All">Semua Instansi</option>
+            {uniqueOrganizations.map(org => (
+              <option key={org} value={org}>{org}</option>
             ))}
           </select>
           {isLoggedIn && isAdmin && (

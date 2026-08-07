@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import { AppUser, UserRole } from '../types';
+import { logAdminAction } from '../utils/auditLogger';
 
 const ManageAdmins: React.FC = () => {
-    const { isAdmin } = useAuth();
+    const { user: currentUser, isAdmin } = useAuth();
     const [users, setUsers] = useState<AppUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -22,7 +23,12 @@ const ManageAdmins: React.FC = () => {
             const querySnapshot = await getDocs(q);
             const usersData: AppUser[] = [];
             querySnapshot.forEach((doc) => {
-                usersData.push(doc.data() as AppUser);
+                const userData = doc.data() as AppUser;
+                // Sembunyikan admin utama jika yang login bukan admin utama
+                if (currentUser?.email !== 'saiful.anwarmbo@gmail.com' && userData.email === 'saiful.anwarmbo@gmail.com') {
+                    return;
+                }
+                usersData.push(userData);
             });
             setUsers(usersData);
         } catch (err: any) {
@@ -49,6 +55,16 @@ const ManageAdmins: React.FC = () => {
             const userRef = doc(db, 'users', user.id);
             await updateDoc(userRef, { role: newRole });
             
+            if (currentUser) {
+                await logAdminAction(
+                    currentUser.uid,
+                    currentUser.email || 'Unknown',
+                    'UPDATE_ROLE',
+                    user.id,
+                    `Changed role of ${user.email} to ${newRole}`
+                );
+            }
+            
             // Update local state
             setUsers(prev => prev.map(u => 
                 u.id === user.id ? { ...u, role: newRole } : u
@@ -56,6 +72,37 @@ const ManageAdmins: React.FC = () => {
         } catch (err) {
             console.error("Error updating user role:", err);
             alert('Gagal memperbarui peran pengguna.');
+        }
+    };
+
+    const deleteUser = async (user: AppUser) => {
+        try {
+            if (user.email === 'saiful.anwarmbo@gmail.com') {
+                alert('Admin utama tidak dapat dihapus.');
+                return;
+            }
+
+            if (!window.confirm(`Apakah Anda yakin ingin menghapus akun ${user.email} secara permanen?`)) {
+                return;
+            }
+
+            const userRef = doc(db, 'users', user.id);
+            await deleteDoc(userRef);
+            
+            if (currentUser) {
+                await logAdminAction(
+                    currentUser.uid,
+                    currentUser.email || 'Unknown',
+                    'DELETE_USER',
+                    user.id,
+                    `Deleted account of ${user.email}`
+                );
+            }
+            
+            setUsers(prev => prev.filter(u => u.id !== user.id));
+        } catch (err) {
+            console.error("Error deleting user:", err);
+            alert('Gagal menghapus pengguna.');
         }
     };
 
@@ -98,12 +145,22 @@ const ManageAdmins: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             {user.email !== 'saiful.anwarmbo@gmail.com' ? (
-                                                <button
-                                                    onClick={() => toggleRole(user)}
-                                                    className={`px-3 py-1 rounded-md text-white text-xs ${user.role === 'admin' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
-                                                >
-                                                    {user.role === 'admin' ? 'Cabut Akses Admin' : 'Jadikan Admin'}
-                                                </button>
+                                                <div className="flex items-center space-x-2">
+                                                    <button
+                                                        onClick={() => toggleRole(user)}
+                                                        className={`px-3 py-1 rounded-md text-white text-xs ${user.role === 'admin' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'}`}
+                                                    >
+                                                        {user.role === 'admin' ? 'Cabut Akses Admin' : 'Jadikan Admin'}
+                                                    </button>
+                                                    {currentUser?.email === 'saiful.anwarmbo@gmail.com' && (
+                                                        <button
+                                                            onClick={() => deleteUser(user)}
+                                                            className="px-3 py-1 rounded-md text-white text-xs bg-red-500 hover:bg-red-600"
+                                                        >
+                                                            Hapus Akun
+                                                        </button>
+                                                    )}
+                                                </div>
                                             ) : (
                                                 <span className="text-gray-400 text-xs italic">Admin Utama</span>
                                             )}

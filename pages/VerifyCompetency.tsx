@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useCompetency } from '../contexts/CompetencyContext';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
+import { useAuth } from '../contexts/AuthContext';
 import { ICONS } from '../constants';
 import { CompetencyRegistration, RegistrationStatus } from '../types';
+import { logAdminAction } from '../utils/auditLogger';
 
 const VerifyCompetency: React.FC = () => {
-  const { registrations, updateRegistrationStatus } = useCompetency();
+  const { registrations, updateRegistrationStatus, deleteRegistration } = useCompetency();
   const { profiles } = useWidyaiswara();
+  const { user: currentUser } = useAuth();
 
   const [selectedReg, setSelectedReg] = useState<CompetencyRegistration | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
@@ -17,6 +20,17 @@ const VerifyCompetency: React.FC = () => {
     setIsUpdating(true);
     try {
       await updateRegistrationStatus(selectedReg.id, status, adminNotes);
+      
+      if (currentUser) {
+        await logAdminAction(
+            currentUser.uid,
+            currentUser.email || 'Unknown',
+            'VERIFY_COMPETENCY',
+            selectedReg.id,
+            `Updated status to ${status} for profile ${selectedReg.profileId}`
+        );
+      }
+      
       setSelectedReg(null);
       setAdminNotes('');
       alert(`Status pendaftaran berhasil diperbarui menjadi ${status === 'verified' ? 'Disetujui' : 'Ditolak'}.`);
@@ -25,6 +39,26 @@ const VerifyCompetency: React.FC = () => {
       alert("Terjadi kesalahan saat memperbarui status.");
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleDelete = async (regId: string, profileId: string) => {
+    if (!window.confirm('Apakah Anda yakin ingin menghapus data pendaftaran ini?')) return;
+    try {
+      await deleteRegistration(regId);
+      if (currentUser) {
+        await logAdminAction(
+            currentUser.uid,
+            currentUser.email || 'Unknown',
+            'DELETE_COMPETENCY_REGISTRATION',
+            regId,
+            `Deleted competency registration for profile ${profileId}`
+        );
+      }
+      alert('Data pendaftaran berhasil dihapus.');
+    } catch (error) {
+      console.error("Error deleting registration", error);
+      alert("Terjadi kesalahan saat menghapus data.");
     }
   };
 
@@ -66,7 +100,7 @@ const VerifyCompetency: React.FC = () => {
                       {reg.status === 'verified' && <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Disetujui</span>}
                       {reg.status === 'rejected' && <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Ditolak</span>}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
                       <button
                         onClick={() => {
                           setSelectedReg(reg);
@@ -75,6 +109,12 @@ const VerifyCompetency: React.FC = () => {
                         className="text-indigo-600 hover:text-indigo-900"
                       >
                         Lihat Detail
+                      </button>
+                      <button
+                        onClick={() => handleDelete(reg.id, reg.profileId)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Hapus
                       </button>
                     </td>
                   </tr>

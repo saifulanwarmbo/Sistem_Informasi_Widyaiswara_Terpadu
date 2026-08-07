@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, onSnapshot, doc, setDoc, updateDoc, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { CompetencyRegistration, AppNotification, RegistrationStatus } from '../types';
 import { useAuth } from './AuthContext';
 
@@ -39,6 +39,7 @@ interface CompetencyContextType {
   notifications: AppNotification[];
   submitRegistration: (registration: Omit<CompetencyRegistration, 'id'>) => Promise<void>;
   updateRegistrationStatus: (id: string, status: RegistrationStatus, notes?: string) => Promise<void>;
+  deleteRegistration: (id: string) => Promise<void>;
   markNotificationRead: (id: string) => Promise<void>;
 }
 
@@ -122,6 +123,15 @@ export const CompetencyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
+  const deleteRegistration = async (id: string) => {
+    try {
+      const regRef = doc(db, 'competency_registrations', id);
+      await deleteDoc(regRef);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, 'competency_registrations', null);
+    }
+  };
+
   const markNotificationRead = async (id: string) => {
     try {
       const notifRef = doc(db, 'notifications', id);
@@ -132,7 +142,7 @@ export const CompetencyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   };
 
   return (
-    <CompetencyContext.Provider value={{ registrations, notifications, submitRegistration, updateRegistrationStatus, markNotificationRead }}>
+    <CompetencyContext.Provider value={{ registrations, notifications, submitRegistration, updateRegistrationStatus, deleteRegistration, markNotificationRead }}>
       {children}
     </CompetencyContext.Provider>
   );

@@ -15,14 +15,38 @@ const DevelopmentHistoryInput: React.FC<DevelopmentHistoryInputProps> = ({ histo
       year: '',
       trainingName: '',
       organizer: '',
+      creditPoints: 0,
     };
     onChange([...history, newItem]);
   };
 
-  const handleItemChange = (index: number, field: keyof Omit<DevelopmentHistoryItem, 'id'>, value: string) => {
+  const handleItemChange = (index: number, field: keyof Omit<DevelopmentHistoryItem, 'id'>, value: string | number) => {
     const newHistory = [...history];
     newHistory[index] = { ...newHistory[index], [field]: value };
     onChange(newHistory);
+  };
+
+  const handleFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.size > 1024 * 1024 * 5) { // 5MB limit
+        alert("Ukuran file maksimal 5MB");
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        const newHistory = [...history];
+        newHistory[index] = { 
+          ...newHistory[index], 
+          documentBase64: result,
+          documentName: file.name
+        };
+        onChange(newHistory);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleDeleteItem = (id: string) => {
@@ -30,24 +54,24 @@ const DevelopmentHistoryInput: React.FC<DevelopmentHistoryInputProps> = ({ histo
   };
 
   return (
-    <div className="border-t pt-6">
+    <div className="border-t pt-6 mt-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Riwayat Pengembangan Profesi</h3>
       <div className="space-y-4">
         {history.length > 0 ? history.map((item, index) => (
           <div key={item.id} className="p-4 border rounded-md bg-gray-50 relative">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
               <div>
-                <label className="block text-xs font-medium text-gray-600">Tahun</label>
+                <label className="block text-xs font-medium text-gray-600">Tahun (Kolektif)</label>
                 <input
-                  type="number"
-                  placeholder="2024"
+                  type="text"
+                  placeholder="Contoh: 2024 atau 2020-2024"
                   value={item.year}
                   onChange={(e) => handleItemChange(index, 'year', e.target.value)}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600">Nama Pelatihan/Pengembangan</label>
+                <label className="block text-xs font-medium text-gray-600">Nama Pelatihan/Pengembangan (Kolektif)</label>
                 <input
                   type="text"
                   placeholder="Pelatihan Kepemimpinan"
@@ -66,7 +90,40 @@ const DevelopmentHistoryInput: React.FC<DevelopmentHistoryInputProps> = ({ histo
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm"
                 />
               </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600">Tambahan Angka Kredit (Kolektif)</label>
+                <input
+                  type="number"
+                  placeholder="0"
+                  value={item.creditPoints || ''}
+                  onChange={(e) => handleItemChange(index, 'creditPoints', Number(e.target.value))}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm"
+                />
+              </div>
             </div>
+            
+            <div className="border border-dashed border-gray-300 rounded-md p-4 mt-2">
+                <label className="block text-xs font-medium text-gray-600 mb-2">Dokumen Bukti Dukung (PDF, Max 5MB)</label>
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="file"
+                    accept=".pdf,application/pdf"
+                    onChange={(e) => handleFileChange(index, e)}
+                    className="block w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-md file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-primary file:text-white
+                      hover:file:bg-secondary cursor-pointer"
+                  />
+                  {item.documentName && (
+                    <span className="text-sm text-green-600 font-medium truncate max-w-xs flex-shrink-0" title={item.documentName}>
+                      ✓ {item.documentName}
+                    </span>
+                  )}
+                </div>
+            </div>
+            
             <button
               type="button"
               onClick={() => handleDeleteItem(item.id)}

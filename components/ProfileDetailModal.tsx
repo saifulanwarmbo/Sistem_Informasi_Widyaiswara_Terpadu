@@ -43,14 +43,32 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
   const DevHistoryItem: React.FC<{ item: DevelopmentHistoryItem }> = ({ item }) => (
     <div className="py-3 border-b border-gray-100 last:border-b-0">
         <p className="font-semibold text-medium-text">{item.trainingName} <span className="font-normal text-gray-500">- {item.year}</span></p>
-        <p className="text-sm text-gray-500">Penyelenggara: {item.organizer}</p>
+        <p className="text-sm text-gray-500 mb-1">Penyelenggara: {item.organizer}</p>
+        {item.creditPoints !== undefined && item.creditPoints > 0 && <p className="text-sm text-green-600 font-medium mb-1">Tambahan AK (Kolektif): {item.creditPoints}</p>}
+        {item.documentBase64 && item.documentName && (
+          <a href={item.documentBase64} download={item.documentName} className="inline-flex items-center mt-1 text-sm text-primary hover:text-secondary print-hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+            </svg>
+            Unduh Dokumen Bukti ({item.documentName})
+          </a>
+        )}
     </div>
   );
 
   const PromHistoryItem: React.FC<{ item: any }> = ({ item }) => (
     <div className="py-3 border-b border-gray-100 last:border-b-0">
         <p className="font-semibold text-medium-text">{item.newTier} <span className="font-normal text-gray-500">- {item.year}</span></p>
-        {item.notes && <p className="text-sm text-gray-500 italic mt-1">Keterangan: {item.notes}</p>}
+        {item.notes && <p className="text-sm text-gray-500 italic mt-1 mb-1">Keterangan: {item.notes}</p>}
+        {item.creditPoints !== undefined && item.creditPoints > 0 && <p className="text-sm text-green-600 font-medium mt-1 mb-1">Tambahan AK (Kolektif): {item.creditPoints}</p>}
+        {item.documentBase64 && item.documentName && (
+          <a href={item.documentBase64} download={item.documentName} className="inline-flex items-center mt-1 text-sm text-primary hover:text-secondary print-hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+            </svg>
+            Unduh Dokumen Bukti ({item.documentName})
+          </a>
+        )}
     </div>
   );
 
@@ -150,11 +168,11 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
             </div>
             
             {/* History Details */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6 border-t print:block print:space-y-10">
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6 border-t print:block print:space-y-10">
                <div className="print:mb-10 lg:col-span-2">
                  <HistorySection title="Riwayat Kenaikan Jenjang">
                     {profile.promotionHistory && profile.promotionHistory.length > 0 ? (
-                        profile.promotionHistory.map(item => <PromHistoryItem key={item.id} item={item} />)
+                        [...profile.promotionHistory].sort((a, b) => (parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0)).map(item => <PromHistoryItem key={item.id} item={item} />)
                     ) : (
                         <p className="text-sm text-gray-500 italic print:text-black">Tidak ada riwayat kenaikan jenjang yang tersedia.</p>
                     )}
@@ -164,7 +182,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                <div className="print:mb-10">
                  <HistorySection title="Riwayat Pengembangan Profesi">
                     {profile.developmentHistory && profile.developmentHistory.length > 0 ? (
-                        profile.developmentHistory.map(item => <DevHistoryItem key={item.id} item={item} />)
+                        [...profile.developmentHistory].sort((a, b) => (parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0)).map(item => <DevHistoryItem key={item.id} item={item} />)
                     ) : (
                         <p className="text-sm text-gray-500 italic print:text-black">Tidak ada riwayat pengembangan yang tersedia.</p>
                     )}
@@ -172,11 +190,11 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                </div>
 
                <div>
-                 <HistorySection title="Riwayat Kinerja">
+                 <HistorySection title="Riwayat Kompetensi">
                      {profile.performanceHistory && profile.performanceHistory.length > 0 ? (
-                        profile.performanceHistory.map(item => <PerfHistoryItem key={item.id} item={item} />)
+                        [...profile.performanceHistory].sort((a, b) => (parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0)).map(item => <PerfHistoryItem key={item.id} item={item} />)
                     ) : (
-                        <p className="text-sm text-gray-500 italic print:text-black">Tidak ada riwayat kinerja yang tersedia.</p>
+                        <p className="text-sm text-gray-500 italic print:text-black">Tidak ada riwayat kompetensi yang tersedia.</p>
                     )}
                  </HistorySection>
                </div>
