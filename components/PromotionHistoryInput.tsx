@@ -29,8 +29,8 @@ const PromotionHistoryInput: React.FC<PromotionHistoryInputProps> = ({ history, 
   const handleFileChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > 1024 * 1024 * 5) { // 5MB limit
-        alert("Ukuran file maksimal 5MB");
+      if (file.size > 500 * 1024) { // 500KB limit for Firestore document size constraints
+        alert("Ukuran file maksimal 500KB untuk menghindari error kapasitas penyimpanan. Mohon kompres PDF Anda terlebih dahulu.");
         return;
       }
       
