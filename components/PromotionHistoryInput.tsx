@@ -59,9 +59,9 @@ const PromotionHistoryInput: React.FC<PromotionHistoryInputProps> = ({ history, 
       <div className="space-y-4">
         {history.length > 0 ? history.map((item, index) => (
           <div key={item.id} className="p-4 border rounded-md bg-gray-50 relative">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-xs font-medium text-gray-600">Tahun (Kolektif)</label>
+                <label className="block text-xs font-medium text-gray-600">Tahun</label>
                 <input
                   type="text"
                   placeholder="Contoh: 2024 atau 2020-2024"
@@ -87,16 +87,6 @@ const PromotionHistoryInput: React.FC<PromotionHistoryInputProps> = ({ history, 
                   placeholder="SK nomor xxx"
                   value={item.notes}
                   onChange={(e) => handleItemChange(index, 'notes', e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-600">Tambahan Angka Kredit (Kolektif)</label>
-                <input
-                  type="number"
-                  placeholder="0"
-                  value={item.creditPoints || ''}
-                  onChange={(e) => handleItemChange(index, 'creditPoints', Number(e.target.value))}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm"
                 />
               </div>
