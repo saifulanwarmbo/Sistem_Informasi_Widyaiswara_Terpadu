@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect, useMemo } from 'react';
 import { auth, loginWithGoogle, logoutFromFirebase, db } from '../firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
@@ -91,8 +91,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const isAdmin = appUser?.role === 'admin';
 
+  const value = useMemo(() => ({
+    isLoggedIn: !!user,
+    user,
+    appUser,
+    isAdmin,
+    login,
+    logout,
+    isLoading
+  }), [user, appUser, isAdmin, isLoading]);
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn: !!user, user, appUser, isAdmin, login, logout, isLoading }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

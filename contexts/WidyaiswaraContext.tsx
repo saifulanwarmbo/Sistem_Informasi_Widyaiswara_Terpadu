@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect, useMemo } from 'react';
 import { WidyaiswaraProfile, JobTier, Organization } from '../types';
 import { db } from '../firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
@@ -162,8 +162,18 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
     console.warn("clearAllProfiles is not fully implemented for Firestore to prevent accidental mass deletion.");
   };
 
+  const value = useMemo(() => ({
+    profiles,
+    organizations,
+    addProfile,
+    deleteProfile,
+    clearAllProfiles,
+    updateProfilePhoto,
+    updateProfile
+  }), [profiles, organizations, user, isAdmin]);
+
   return (
-    <WidyaiswaraContext.Provider value={{ profiles, organizations, addProfile, deleteProfile, clearAllProfiles, updateProfilePhoto, updateProfile }}>
+    <WidyaiswaraContext.Provider value={value}>
       {children}
     </WidyaiswaraContext.Provider>
   );

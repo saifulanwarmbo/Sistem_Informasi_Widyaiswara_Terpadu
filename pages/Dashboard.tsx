@@ -11,20 +11,27 @@ const Dashboard: React.FC = () => {
 
     const totalWidyaiswara = profiles.length;
     const totalOrganizations = organizations.filter(org => org.total > 0).length;
-    const topTierCount = profiles.filter(p => p.tier === JobTier.AhliUtama).length;
+    const totalPertama = profiles.filter(p => p.tier === JobTier.AhliPertama).length;
+    const totalMuda = profiles.filter(p => p.tier === JobTier.AhliMuda).length;
+    const totalMadya = profiles.filter(p => p.tier === JobTier.AhliMadya).length;
+    const totalUtama = profiles.filter(p => p.tier === JobTier.AhliUtama).length;
+    
+    const totalPengembanganProfesi = useMemo(() => {
+        return profiles.reduce((acc, profile) => acc + (profile.developmentHistory?.length || 0), 0);
+    }, [profiles]);
 
-    const chartDataTierDistribution = [
-      { name: 'Pertama', value: profiles.filter(p => p.tier === JobTier.AhliPertama).length, fill: '#4DD0E1' },
-      { name: 'Muda', value: profiles.filter(p => p.tier === JobTier.AhliMuda).length, fill: '#4DB6AC' },
-      { name: 'Madya', value: profiles.filter(p => p.tier === JobTier.AhliMadya).length, fill: '#81C784' },
-      { name: 'Utama', value: profiles.filter(p => p.tier === JobTier.AhliUtama).length, fill: '#AED581' },
-    ];
+    const chartDataTierDistribution = useMemo(() => [
+      { name: 'Pertama', value: totalPertama, fill: '#4DD0E1' },
+      { name: 'Muda', value: totalMuda, fill: '#4DB6AC' },
+      { name: 'Madya', value: totalMadya, fill: '#81C784' },
+      { name: 'Utama', value: totalUtama, fill: '#AED581' },
+    ], [totalPertama, totalMuda, totalMadya, totalUtama]);
 
-    const organizationData = organizations.map(org => ({
+    const organizationData = useMemo(() => organizations.map(org => ({
         name: org.name,
         ...org.widyaiswaraCount,
         total: org.total,
-    })).sort((a, b) => b.total - a.total).slice(0, 5);
+    })).sort((a, b) => b.total - a.total).slice(0, 5), [organizations]);
     
     const widyaiswaraGrowthData = useMemo(() => {
         if (!profiles || profiles.length === 0) {
@@ -80,7 +87,14 @@ const Dashboard: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <DashboardCard title="Total Widyaiswara" value={totalWidyaiswara.toString()} icon={ICONS.users} color="bg-blue-500" />
                 <DashboardCard title="Total Instansi Aktif" value={totalOrganizations.toString()} icon={ICONS.building} color="bg-green-500" />
-                <DashboardCard title="Widyaiswara Ahli Utama" value={topTierCount.toString()} icon={ICONS.star} color="bg-yellow-500" />
+                <DashboardCard title="Total Pengembangan Profesi" value={totalPengembanganProfesi.toString()} icon={ICONS.development} color="bg-purple-500" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <DashboardCard title="Ahli Utama" value={totalUtama.toString()} icon={ICONS.star} color="bg-yellow-500" />
+                <DashboardCard title="Ahli Madya" value={totalMadya.toString()} icon={ICONS.tiers} color="bg-teal-500" />
+                <DashboardCard title="Ahli Muda" value={totalMuda.toString()} icon={ICONS.tiers} color="bg-cyan-500" />
+                <DashboardCard title="Ahli Pertama" value={totalPertama.toString()} icon={ICONS.tiers} color="bg-blue-400" />
             </div>
 
             {/* Charts */}
