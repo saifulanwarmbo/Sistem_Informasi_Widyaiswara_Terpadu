@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ICONS } from '../constants';
 import { useAuth } from '../contexts/AuthContext';
-import logoLan from '../assets/logo-lan.png';
+import logoLan from '../assets/logo-lan.ico';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: ICONS.dashboard },

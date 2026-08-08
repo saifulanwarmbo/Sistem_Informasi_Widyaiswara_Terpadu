@@ -5,7 +5,7 @@ import { FirebaseError } from 'firebase/app';
 import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 
-import logoLan from '../assets/logo-lan.png';
+import logoLan from '../assets/logo-lan.ico';
 
 const Login: React.FC = () => {
   const [error, setError] = useState('');
@@ -87,17 +87,6 @@ const Login: React.FC = () => {
         </div>
         
         <div className="space-y-6">
-          <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4 text-sm text-blue-200">
-            <p className="font-semibold mb-1 flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              Info Login Publik
-            </p>
-            <ul className="list-disc pl-5 space-y-1 text-xs">
-              <li>Jika muncul <strong>Error 403: access_denied</strong>, pastikan email Anda sudah ditambahkan ke daftar Test Users di Google Cloud Console, atau publish OAuth Consent Screen.</li>
-              <li>Jika muncul <strong>Error 403: disallowed_useragent</strong>, buka link ini di browser standar (Chrome/Safari), bukan dari dalam aplikasi (seperti WhatsApp/Instagram).</li>
-            </ul>
-          </div>
-
           {error && (
             <div className="p-4 bg-red-900/50 border border-red-500/50 rounded-md">
               <p className="text-sm text-center text-red-200">{error}</p>

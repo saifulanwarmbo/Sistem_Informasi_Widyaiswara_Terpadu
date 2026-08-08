@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCompetency } from '../contexts/CompetencyContext';
 import { ICONS } from '../constants';
-import logoLan from '../assets/logo-lan.png';
+import logoLan from '../assets/logo-lan.ico';
 
 interface HeaderProps {
   toggleSidebar: () => void;
