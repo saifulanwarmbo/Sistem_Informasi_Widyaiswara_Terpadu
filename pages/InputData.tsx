@@ -154,16 +154,16 @@ const InputData: React.FC = () => {
                         </select>
                     </div>
                     <div>
+                        <label htmlFor="joinDate" className="block text-sm font-medium text-gray-700">TMT Widyaiswara</label>
+                        <input type="date" id="joinDate" value={joinDate} onChange={e => setJoinDate(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
+                    </div>
+                    <div>
                         <label htmlFor="creditPoints" className="block text-sm font-medium text-gray-700">Angka Kredit</label>
                         <input type="number" id="creditPoints" value={creditPoints} onChange={e => setCreditPoints(Number(e.target.value))} required className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
                     </div>
                     <div>
                         <label htmlFor="whatsappNumber" className="block text-sm font-medium text-gray-700">Nomor WA Aktif</label>
                         <input type="text" id="whatsappNumber" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} placeholder="08xxxxxxxxxx" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
-                    </div>
-                    <div>
-                        <label htmlFor="joinDate" className="block text-sm font-medium text-gray-700">Tanggal Bergabung</label>
-                        <input type="date" id="joinDate" value={joinDate} onChange={e => setJoinDate(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary focus:border-secondary sm:text-sm" />
                     </div>
                 </div>
 

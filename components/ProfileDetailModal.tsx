@@ -153,16 +153,18 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                 alt={profile.name}
               />
               <div className="space-y-3 flex-grow">
-                 <span className={`inline-block rounded-full px-4 py-1 text-sm font-semibold print:text-black print:border print:border-gray-300 print:bg-transparent ${getTierBadgeColor(profile.tier)}`}>
-                    {profile.tier}
-                  </span>
+                 <div>
+                   <span className={`inline-block rounded-full px-4 py-1 text-sm font-semibold print:text-black print:border print:border-gray-300 print:bg-transparent ${getTierBadgeColor(profile.tier)}`}>
+                      {profile.tier}
+                   </span>
+                   <p className="text-sm text-gray-500 mt-2 print:text-black"><span className="font-semibold text-dark-text print:text-black">TMT Widyaiswara:</span> {profile.joinDate ? new Date(profile.joinDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date(profile.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                 </div>
                   <p className="text-lg text-medium-text font-medium print:text-black">{profile.organization}</p>
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
                       <p><span className="font-semibold text-dark-text print:text-black">NIP:</span> {profile.nip}</p>
                       <p><span className="font-semibold text-dark-text print:text-black">NIWN:</span> {profile.niwn}</p>
                       <p><span className="font-semibold text-dark-text print:text-black">Angka Kredit:</span> <span className="text-primary font-bold print:text-black">{profile.creditPoints}</span></p>
                       {profile.whatsappNumber && <p><span className="font-semibold text-dark-text print:text-black">No. WA:</span> {profile.whatsappNumber}</p>}
-                      <p><span className="font-semibold text-dark-text print:text-black">Bergabung:</span> {profile.joinDate ? new Date(profile.joinDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date(profile.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                   </div>
               </div>
             </div>
