@@ -155,10 +155,10 @@ const Dashboard: React.FC = () => {
                         <YAxis dataKey="name" type="category" width={150} tick={{ fontSize: 12 }} />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey={JobTier.AhliPertama} stackId="a" fill="#4DD0E1" name="Pertama" />
-                        <Bar dataKey={JobTier.AhliMuda} stackId="a" fill="#4DB6AC" name="Muda" />
-                        <Bar dataKey={JobTier.AhliMadya} stackId="a" fill="#81C784" name="Madya" />
-                        <Bar dataKey={JobTier.AhliUtama} stackId="a" fill="#AED581" name="Utama" />
+                        <Bar dataKey={JobTier.AhliPertama as string} stackId="a" fill="#4DD0E1" name="Pertama" />
+                        <Bar dataKey={JobTier.AhliMuda as string} stackId="a" fill="#4DB6AC" name="Muda" />
+                        <Bar dataKey={JobTier.AhliMadya as string} stackId="a" fill="#81C784" name="Madya" />
+                        <Bar dataKey={JobTier.AhliUtama as string} stackId="a" fill="#AED581" name="Utama" />
                     </BarChart>
                 </ResponsiveContainer>
             </motion.div>
