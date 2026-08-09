@@ -69,8 +69,8 @@ const InputData: React.FC = () => {
       }
 
       try {
-        const compressedBase64 = await compressImage(file, 400, 400, 0.7);
-        if (compressedBase64.length > 900000) {
+        const compressedBase64 = await compressImage(file, 200, 200, 0.6);
+        if (compressedBase64.length > 150000) {
            alert("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.");
            return;
         }

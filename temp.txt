@@ -1,0 +1,25 @@
+                    ) : (
+                        <p className="text-sm text-gray-500 italic print:text-black">Tidak ada riwayat pengembangan yang tersedia.</p>
+                    )}
+                 </HistorySection>
+               </div>
+
+               <div>
+                 <HistorySection title="Riwayat Kompetensi">
+                     {profile.performanceHistory && profile.performanceHistory.length > 0 ? (
+                        [...profile.performanceHistory].sort((a, b) => (parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0)).map(item => <PerfHistoryItem key={item.id} item={item} />)
+                    ) : (
+                        <p className="text-sm text-gray-500 italic print:text-black">Tidak ada riwayat kompetensi yang tersedia.</p>
+                    )}
+                 </HistorySection>
+               </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default ProfileDetailModal;

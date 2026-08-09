@@ -58,9 +58,9 @@ const SelfRegistration: React.FC = () => {
       }
 
       try {
-        const compressedBase64 = await compressImage(file, 400, 400, 0.7);
-        // Ensure the base64 string is < 1MB (approx 1,000,000 characters)
-        if (compressedBase64.length > 900000) {
+        const compressedBase64 = await compressImage(file, 200, 200, 0.6);
+        // Ensure the base64 string is small enough
+        if (compressedBase64.length > 150000) {
            alert("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.");
            return;
         }

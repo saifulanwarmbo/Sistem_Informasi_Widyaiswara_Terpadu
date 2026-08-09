@@ -40,18 +40,52 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     </div>
   );
   
+  const openPdfInNewTab = (base64Data: string) => {
+    try {
+      const arr = base64Data.split(',');
+      if (arr.length < 2) return;
+      const mimeMatch = arr[0].match(/:(.*?);/);
+      if (!mimeMatch) return;
+      const mime = mimeMatch[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      const blob = new Blob([u8arr], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const newWindow = window.open(url, '_blank');
+      if (newWindow) {
+          setTimeout(() => URL.revokeObjectURL(url), 10000);
+      }
+    } catch (e) {
+      console.error("Error opening PDF", e);
+      alert("Tidak dapat membuka dokumen.");
+    }
+  };
+
   const DevHistoryItem: React.FC<{ item: DevelopmentHistoryItem }> = ({ item }) => (
     <div className="py-3 border-b border-gray-100 last:border-b-0">
         <p className="font-semibold text-medium-text">{item.trainingName} <span className="font-normal text-gray-500">- {item.year}</span></p>
         <p className="text-sm text-gray-500 mb-1">Penyelenggara: {item.organizer}</p>
         {item.creditPoints !== undefined && item.creditPoints > 0 && <p className="text-sm text-green-600 font-medium mb-1">Tambahan AK (Kolektif): {item.creditPoints}</p>}
         {item.documentBase64 && item.documentName && (
-          <a href={item.documentBase64} download={item.documentName} className="inline-flex items-center mt-1 text-sm text-primary hover:text-secondary print-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-            </svg>
-            Unduh Dokumen Bukti ({item.documentName})
-          </a>
+          <div className="flex items-center space-x-3 mt-1 print-hidden">
+            <button type="button" onClick={() => openPdfInNewTab(item.documentBase64!)} className="inline-flex items-center text-sm text-primary hover:text-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Lihat Dokumen
+            </button>
+            <a href={item.documentBase64} download={item.documentName} className="inline-flex items-center text-sm text-primary hover:text-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+              </svg>
+              Unduh ({item.documentName})
+            </a>
+          </div>
         )}
     </div>
   );
@@ -62,12 +96,21 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
         {item.notes && <p className="text-sm text-gray-500 italic mt-1 mb-1">Keterangan: {item.notes}</p>}
         {item.creditPoints !== undefined && item.creditPoints > 0 && <p className="text-sm text-green-600 font-medium mt-1 mb-1">Tambahan AK (Kolektif): {item.creditPoints}</p>}
         {item.documentBase64 && item.documentName && (
-          <a href={item.documentBase64} download={item.documentName} className="inline-flex items-center mt-1 text-sm text-primary hover:text-secondary print-hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-            </svg>
-            Unduh Dokumen Bukti ({item.documentName})
-          </a>
+          <div className="flex items-center space-x-3 mt-1 print-hidden">
+            <button type="button" onClick={() => openPdfInNewTab(item.documentBase64!)} className="inline-flex items-center text-sm text-primary hover:text-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Lihat Dokumen
+            </button>
+            <a href={item.documentBase64} download={item.documentName} className="inline-flex items-center text-sm text-primary hover:text-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+              </svg>
+              Unduh ({item.documentName})
+            </a>
+          </div>
         )}
     </div>
   );
@@ -201,7 +244,6 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                  </HistorySection>
                </div>
             </div>
-
           </div>
         </div>
       </div>
