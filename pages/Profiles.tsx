@@ -36,10 +36,14 @@ const Profiles: React.FC = () => {
     });
   }, [searchTerm, selectedTier, selectedOrganization, profiles]);
   
-  const handleSaveProfile = (updatedData: Partial<Omit<WidyaiswaraProfile, 'id'>>) => {
+  const handleSaveProfile = async (updatedData: Partial<Omit<WidyaiswaraProfile, 'id'>>) => {
     if (editingProfile) {
-      updateProfile(editingProfile.id, updatedData);
-      setEditingProfile(null); // Close modal on save
+      try {
+        await updateProfile(editingProfile.id, updatedData);
+        setEditingProfile(null); // Close modal on save
+      } catch (error: any) {
+        alert(error.message || "Gagal menyimpan perubahan. Silakan coba lagi.");
+      }
     }
   };
 

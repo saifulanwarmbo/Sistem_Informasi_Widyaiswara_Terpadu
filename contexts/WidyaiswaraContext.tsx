@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect, useMemo } from 'react';
 import { WidyaiswaraProfile, JobTier, Organization } from '../types';
 import { db } from '../firebase';
-import { collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
 import { logAdminAction } from '../utils/auditLogger';
 
@@ -71,6 +71,7 @@ interface WidyaiswaraContextType {
   updateProfile: (id: string, updatedData: Partial<Omit<WidyaiswaraProfile, 'id' | 'ownerId'>>) => Promise<void>;
   clearAllProfiles: () => Promise<void>;
   updateProfilePhoto: (id: string, photoUrl: string) => Promise<void>;
+  getDocument: (id: string) => Promise<string | null>;
 }
 
 const WidyaiswaraContext = createContext<WidyaiswaraContextType | undefined>(undefined);
@@ -113,7 +114,38 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
     }
     
     try {
+      const docsToSave: { id: string, base64: string }[] = [];
+      
+      if (newProfile.promotionHistory) {
+          newProfile.promotionHistory = newProfile.promotionHistory.map(item => {
+              if (item.documentBase64) {
+                  docsToSave.push({ id: item.id, base64: item.documentBase64 });
+                  const { documentBase64, ...rest } = item;
+                  return rest;
+              }
+              return item;
+          });
+      }
+      
+      if (newProfile.developmentHistory) {
+          newProfile.developmentHistory = newProfile.developmentHistory.map(item => {
+              if (item.documentBase64) {
+                  docsToSave.push({ id: item.id, base64: item.documentBase64 });
+                  const { documentBase64, ...rest } = item;
+                  return rest;
+              }
+              return item;
+          });
+      }
+
       await setDoc(doc(db, 'profiles', newId), newProfile);
+      
+      if (docsToSave.length > 0) {
+          await Promise.all(docsToSave.map(docData => 
+              setDoc(doc(db, 'profile_documents', docData.id), { documentBase64: docData.base64 })
+          ));
+      }
+
       if (isAdmin && user) {
           await logAdminAction(user.uid, user.email || 'Unknown', 'CREATE_PROFILE', newId, `Created profile for ${newProfile.name}`);
       }
@@ -137,7 +169,38 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
   
   const updateProfile = async (id: string, updatedData: Partial<Omit<WidyaiswaraProfile, 'id' | 'ownerId'>>) => {
     try {
+      const docsToSave: { id: string, base64: string }[] = [];
+      
+      if (updatedData.promotionHistory) {
+          updatedData.promotionHistory = updatedData.promotionHistory.map(item => {
+              if (item.documentBase64) {
+                  docsToSave.push({ id: item.id, base64: item.documentBase64 });
+                  const { documentBase64, ...rest } = item;
+                  return rest;
+              }
+              return item;
+          });
+      }
+      
+      if (updatedData.developmentHistory) {
+          updatedData.developmentHistory = updatedData.developmentHistory.map(item => {
+              if (item.documentBase64) {
+                  docsToSave.push({ id: item.id, base64: item.documentBase64 });
+                  const { documentBase64, ...rest } = item;
+                  return rest;
+              }
+              return item;
+          });
+      }
+
       await updateDoc(doc(db, 'profiles', id), updatedData);
+      
+      if (docsToSave.length > 0) {
+          await Promise.all(docsToSave.map(docData => 
+              setDoc(doc(db, 'profile_documents', docData.id), { documentBase64: docData.base64 }, { merge: true })
+          ));
+      }
+
       if (isAdmin && user) {
           await logAdminAction(user.uid, user.email || 'Unknown', 'UPDATE_PROFILE', id, `Updated profile fields: ${Object.keys(updatedData).join(', ')}`);
       }
@@ -156,6 +219,19 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
     }
   };
 
+  const getDocument = async (documentId: string): Promise<string | null> => {
+      try {
+          const docSnap = await getDoc(doc(db, 'profile_documents', documentId));
+          if (docSnap.exists()) {
+              return docSnap.data().documentBase64;
+          }
+          return null;
+      } catch (error) {
+          console.error("Error fetching document:", error);
+          return null;
+      }
+  };
+
   const clearAllProfiles = async () => {
     // This is a dangerous operation, usually you'd want to iterate and delete or use a batch
     // For simplicity, we'll just log a warning as deleting all documents from client is not recommended
@@ -169,7 +245,8 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
     deleteProfile,
     clearAllProfiles,
     updateProfilePhoto,
-    updateProfile
+    updateProfile,
+    getDocument
   }), [profiles, organizations, user, isAdmin]);
 
   return (
