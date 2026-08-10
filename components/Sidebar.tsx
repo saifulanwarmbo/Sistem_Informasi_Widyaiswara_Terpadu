@@ -50,14 +50,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       md:relative md:translate-x-0
       ${isOpen ? 'translate-x-0' : '-translate-x-full'}
     `}>
-      <div className="flex flex-col items-center justify-center px-4 py-6 border-b border-gray-200 relative bg-white shadow-sm">
-        <button onClick={() => setIsOpen(false)} className="md:hidden absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none">
+      <div className="flex flex-col items-center justify-center px-4 py-6 border-b border-blue-800 relative">
+        <button onClick={() => setIsOpen(false)} className="md:hidden absolute top-4 right-4 text-gray-300 hover:text-white focus:outline-none">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
         <div className="w-full flex justify-center mb-2 mt-2">
-          <img src={logoLan} alt="Logo LAN RI" className="h-16 w-auto object-contain drop-shadow-sm" />
+          <img src={logoLan} alt="Logo LAN RI" className="h-16 w-auto object-contain drop-shadow-md" />
         </div>
-        <h1 className="text-xl font-extrabold tracking-wider text-center text-primary">SIWITA</h1>
+        <h1 className="text-xl font-extrabold tracking-wider text-center text-white">SIWITA</h1>
       </div>
       <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
         {navItems.map(item => (

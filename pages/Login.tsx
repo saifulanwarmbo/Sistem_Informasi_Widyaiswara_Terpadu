@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import logoLan from '../assets/logo-lan.png';
+import bgLan from '../assets/lan_building_bg.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { FirebaseError } from 'firebase/app';
@@ -65,8 +66,14 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-full w-full bg-gradient-to-br from-[#0a192f] via-primary to-[#112240] text-gray-100 overflow-hidden">
-      {/* Animated background blobs */}
+    <div 
+      className="relative flex items-center justify-center min-h-full w-full bg-cover bg-center bg-no-repeat overflow-hidden"
+      style={{ backgroundImage: `url(${bgLan})` }}
+    >
+      {/* Dark overlay for better readability */}
+      <div className="absolute inset-0 bg-gray-900/60 mix-blend-multiply"></div>
+      
+      {/* Animated background blobs (optional, but keeping them for subtle effects) */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-accent/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob"></div>
       <div className="absolute top-0 right-1/4 w-72 h-72 bg-secondary/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
       <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-primary/20 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
