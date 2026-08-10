@@ -44,19 +44,37 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     </div>
   );
   
-  const handleViewDocument = async (id: string) => {
+  const handleViewDocument = async (id: string, fallbackBase64?: string) => {
+    // Open window synchronously to avoid popup blockers for async operations
+    const newWindow = window.open('', '_blank');
+    if (newWindow) {
+        newWindow.document.write('<p style="font-family: sans-serif; padding: 20px;">Memuat dokumen...</p>');
+    }
+
     setLoadingDocId(id);
-    const base64Data = await getDocument(id);
+    let base64Data = await getDocument(id);
+    if (!base64Data && fallbackBase64) {
+        base64Data = fallbackBase64;
+    }
     setLoadingDocId(null);
+    
     if (!base64Data) {
+        if (newWindow) newWindow.close();
         alert("Dokumen tidak ditemukan atau terjadi kesalahan.");
         return;
     }
+    
     try {
       const arr = base64Data.split(',');
-      if (arr.length < 2) return;
+      if (arr.length < 2) {
+          if (newWindow) newWindow.close();
+          return;
+      }
       const mimeMatch = arr[0].match(/:(.*?);/);
-      if (!mimeMatch) return;
+      if (!mimeMatch) {
+          if (newWindow) newWindow.close();
+          return;
+      }
       const mime = mimeMatch[1];
       const bstr = atob(arr[1]);
       let n = bstr.length;
@@ -66,19 +84,33 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
       }
       const blob = new Blob([u8arr], { type: mime });
       const url = URL.createObjectURL(blob);
-      const newWindow = window.open(url, '_blank');
+      
       if (newWindow) {
+          newWindow.location.href = url;
           setTimeout(() => URL.revokeObjectURL(url), 10000);
+      } else {
+          // Fallback
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 100);
       }
     } catch (e) {
       console.error("Error opening PDF", e);
+      if (newWindow) newWindow.close();
       alert("Tidak dapat membuka dokumen.");
     }
   };
 
-  const handleDownloadDocument = async (id: string, fileName: string) => {
+  const handleDownloadDocument = async (id: string, fileName: string, fallbackBase64?: string) => {
     setLoadingDocId(id);
-    const base64Data = await getDocument(id);
+    let base64Data = await getDocument(id);
+    if (!base64Data && fallbackBase64) {
+        base64Data = fallbackBase64;
+    }
     setLoadingDocId(null);
     if (!base64Data) {
         alert("Dokumen tidak ditemukan atau terjadi kesalahan.");
@@ -87,7 +119,9 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     const a = document.createElement('a');
     a.href = base64Data;
     a.download = fileName;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
   };
 
   const DevHistoryItem: React.FC<{ item: DevelopmentHistoryItem }> = ({ item }) => (
@@ -97,14 +131,14 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
         {item.creditPoints !== undefined && item.creditPoints > 0 && <p className="text-sm text-green-600 font-medium mb-1">Tambahan AK (Kolektif): {item.creditPoints}</p>}
         {item.documentName && (
           <div className="flex items-center space-x-3 mt-1 print-hidden">
-            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleViewDocument(item.id)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
+            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleViewDocument(item.id, item.documentBase64)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               {loadingDocId === item.id ? 'Memuat...' : 'Lihat Dokumen'}
             </button>
-            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleDownloadDocument(item.id, item.documentName!)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
+            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleDownloadDocument(item.id, item.documentName!, item.documentBase64)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
               </svg>
@@ -122,14 +156,14 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
         {item.creditPoints !== undefined && item.creditPoints > 0 && <p className="text-sm text-green-600 font-medium mt-1 mb-1">Tambahan AK (Kolektif): {item.creditPoints}</p>}
         {item.documentName && (
           <div className="flex items-center space-x-3 mt-1 print-hidden">
-            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleViewDocument(item.id)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
+            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleViewDocument(item.id, item.documentBase64)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               {loadingDocId === item.id ? 'Memuat...' : 'Lihat Dokumen'}
             </button>
-            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleDownloadDocument(item.id, item.documentName!)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
+            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleDownloadDocument(item.id, item.documentName!, item.documentBase64)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
               </svg>
@@ -250,11 +284,11 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                </div>
 
                <div className="print:mb-10">
-                 <HistorySection title="Riwayat Pengembangan Profesi">
+                 <HistorySection title="Riwayat Sertifikasi Pengampuan">
                     {profile.developmentHistory && profile.developmentHistory.length > 0 ? (
                         [...profile.developmentHistory].sort((a, b) => (parseInt(a.year, 10) || 0) - (parseInt(b.year, 10) || 0)).map(item => <DevHistoryItem key={item.id} item={item} />)
                     ) : (
-                        <p className="text-sm text-gray-500 italic print:text-black">Tidak ada riwayat pengembangan yang tersedia.</p>
+                        <p className="text-sm text-gray-500 italic print:text-black">Tidak ada riwayat sertifikasi pengampuan yang tersedia.</p>
                     )}
                  </HistorySection>
                </div>

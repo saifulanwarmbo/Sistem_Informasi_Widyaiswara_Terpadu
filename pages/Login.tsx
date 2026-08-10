@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import logoLan from '../assets/logo-lan.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { FirebaseError } from 'firebase/app';
 import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 
-import logoLan from '../assets/logo-lan.ico';
+
 
 const Login: React.FC = () => {
   const [error, setError] = useState('');
@@ -71,32 +72,30 @@ const Login: React.FC = () => {
       <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-primary/20 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md p-8 space-y-8 bg-gray-900/40 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-700/50">
+      <div className="relative z-10 w-full max-w-md p-8 space-y-8 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white">
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <div className="bg-white px-6 py-4 rounded-xl shadow-2xl border-4 border-white/20 ring-4 ring-primary/30 inline-block">
-              <img src={logoLan} alt="Logo LAN RI" className="h-16 md:h-20 w-auto object-contain" />
-            </div>
+            <img src={logoLan} alt="Logo LAN RI" className="h-24 md:h-28 w-auto object-contain drop-shadow-sm" />
           </div>
-          <h2 className="text-4xl font-bold text-white tracking-tight">
-            Login <span className="text-accent">SIWITA</span>
+          <h2 className="text-4xl font-bold text-gray-800 tracking-tight">
+            Login <span className="text-primary">SIWITA</span>
           </h2>
-          <p className="mt-2 text-sm text-gray-300">
+          <p className="mt-2 text-sm text-gray-600 font-medium">
             Sistem Informasi Widyaiswara Indonesia Terpadu
           </p>
         </div>
         
         <div className="space-y-6">
           {error && (
-            <div className="p-4 bg-red-900/50 border border-red-500/50 rounded-md">
-              <p className="text-sm text-center text-red-200">{error}</p>
+            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-center text-red-600">{error}</p>
             </div>
           )}
           <div>
             <button
               onClick={handleGoogleLogin}
               disabled={isLoadingLogin}
-              className="relative flex justify-center items-center w-full px-4 py-3 text-sm font-medium text-white border border-transparent rounded-md group bg-secondary hover:bg-accent hover:text-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-accent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative flex justify-center items-center w-full px-4 py-3 text-sm font-bold text-white border border-transparent rounded-md shadow-sm group bg-primary hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-primary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

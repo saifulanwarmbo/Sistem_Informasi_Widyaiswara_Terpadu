@@ -55,7 +55,7 @@ const DevelopmentHistoryInput: React.FC<DevelopmentHistoryInputProps> = ({ histo
 
   return (
     <div className="border-t pt-6 mt-6">
-      <h3 className="text-lg font-medium text-gray-800 mb-4">Riwayat Pengembangan Profesi</h3>
+      <h3 className="text-lg font-medium text-gray-800 mb-4">Riwayat Sertifikasi Pengampuan</h3>
       <div className="space-y-4">
         {history.length > 0 ? history.map((item, index) => (
           <div key={item.id} className="p-4 border rounded-md bg-gray-50 relative">
@@ -124,7 +124,7 @@ const DevelopmentHistoryInput: React.FC<DevelopmentHistoryInputProps> = ({ histo
             </button>
           </div>
         )) : (
-            <p className="text-sm text-gray-500 text-center py-4">Belum ada riwayat pengembangan yang ditambahkan.</p>
+            <p className="text-sm text-gray-500 text-center py-4">Belum ada riwayat sertifikasi pengampuan yang ditambahkan.</p>
         )}
       </div>
       <button

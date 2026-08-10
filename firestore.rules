@@ -171,6 +171,11 @@ service cloud.firestore {
       allow delete: if isAdmin() && resource.data.email != 'saiful.anwarmbo@gmail.com';
     }
 
+    match /profile_documents/{docId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
     match /profiles/{profileId} {
       // Allow anyone to read profiles
       allow read: if true;
@@ -234,6 +239,10 @@ service cloud.firestore {
       allow create: if isAdmin() && isValidAgenda();
       allow update: if isAdmin() && isValidAgenda();
       allow delete: if isAdmin();
+    }
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }

@@ -4,6 +4,7 @@ import { useCompetency } from '../contexts/CompetencyContext';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
 import { useAuth } from '../contexts/AuthContext';
 import { ICONS } from '../constants';
+import FlyerSection from './CompetencyTestFlyer';
 
 const CompetencyTest: React.FC = () => {
   const { registrations, submitRegistration } = useCompetency();
@@ -79,62 +80,70 @@ const CompetencyTest: React.FC = () => {
 
   if (!userProfile) {
     return (
-      <div className="bg-white p-8 rounded-lg shadow-md text-center">
-        <h2 className="text-2xl font-bold text-dark-text mb-4">Uji Kompetensi Widyaiswara</h2>
-        <p className="text-medium-text mb-6">Anda belum memiliki profil Widyaiswara. Silakan buat profil Anda terlebih dahulu di menu Registrasi Mandiri.</p>
+      <div className="max-w-4xl mx-auto space-y-6">
+        <FlyerSection />
+        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+          <h2 className="text-2xl font-bold text-dark-text mb-4">Uji Kompetensi Widyaiswara</h2>
+          <p className="text-medium-text mb-6">Anda belum memiliki profil Widyaiswara. Silakan buat profil Anda terlebih dahulu di menu Registrasi Mandiri.</p>
+        </div>
       </div>
     );
   }
 
   if (userRegistration) {
     return (
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold text-dark-text mb-6">Status Pendaftaran Uji Kompetensi</h2>
-        
-        <div className="mb-6">
-          <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">Status Saat Ini</p>
-          <div className="flex items-center space-x-2">
-            {userRegistration.status === 'pending' && <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 font-semibold">Menunggu Verifikasi</span>}
-            {userRegistration.status === 'verified' && <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 font-semibold">Disetujui</span>}
-            {userRegistration.status === 'rejected' && <span className="px-3 py-1 rounded-full bg-red-100 text-red-800 font-semibold">Ditolak</span>}
+      <div className="max-w-4xl mx-auto space-y-6">
+        <FlyerSection />
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-dark-text mb-6">Status Pendaftaran Uji Kompetensi</h2>
+          
+          <div className="mb-6">
+            <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">Status Saat Ini</p>
+            <div className="flex items-center space-x-2">
+              {userRegistration.status === 'pending' && <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 font-semibold">Menunggu Verifikasi</span>}
+              {userRegistration.status === 'verified' && <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 font-semibold">Disetujui</span>}
+              {userRegistration.status === 'rejected' && <span className="px-3 py-1 rounded-full bg-red-100 text-red-800 font-semibold">Ditolak</span>}
+            </div>
           </div>
-        </div>
 
-        <div className="mb-6">
-          <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">Tanggal Pengajuan</p>
-          <p className="text-dark-text font-medium">{new Date(userRegistration.submissionDate).toLocaleDateString('id-ID')}</p>
-        </div>
-
-        {userRegistration.adminNotes && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">Catatan Admin</p>
-            <p className="text-dark-text">{userRegistration.adminNotes}</p>
+          <div className="mb-6">
+            <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">Tanggal Pengajuan</p>
+            <p className="text-dark-text font-medium">{new Date(userRegistration.submissionDate).toLocaleDateString('id-ID')}</p>
           </div>
-        )}
 
-        <div>
-          <p className="text-sm text-gray-500 uppercase tracking-wider mb-2">Dokumen Terlampir</p>
-          <ul className="space-y-2">
-            {userRegistration.documents.map((doc, index) => (
-              <li key={index} className="flex items-center space-x-2 text-blue-600 hover:text-blue-800">
-                {ICONS.document}
-                <a href={doc.url} target="_blank" rel="noopener noreferrer" className="underline">{doc.name}</a>
-              </li>
-            ))}
-          </ul>
+          {userRegistration.adminNotes && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-500 uppercase tracking-wider mb-1">Catatan Admin</p>
+              <p className="text-dark-text">{userRegistration.adminNotes}</p>
+            </div>
+          )}
+
+          <div>
+            <p className="text-sm text-gray-500 uppercase tracking-wider mb-2">Dokumen Terlampir</p>
+            <ul className="space-y-2">
+              {userRegistration.documents.map((doc, index) => (
+                <li key={index} className="flex items-center space-x-2 text-blue-600 hover:text-blue-800">
+                  {ICONS.document}
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" className="underline">{doc.name}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-dark-text mb-6">Pendaftaran Uji Kompetensi</h2>
-      <p className="text-medium-text mb-6">
-        Silakan lengkapi dokumen persyaratan untuk mengikuti Uji Kompetensi Widyaiswara.
-        Gunakan tautan (link) Google Drive atau layanan penyimpanan awan lainnya untuk dokumen Anda.
-        Pastikan tautan dapat diakses oleh publik (Anyone with the link).
-      </p>
+    <div className="max-w-4xl mx-auto space-y-6">
+      <FlyerSection />
+      <div className="bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
+        <h2 className="text-2xl font-bold text-dark-text mb-6">Pendaftaran Uji Kompetensi</h2>
+        <p className="text-medium-text mb-6">
+          Silakan lengkapi dokumen persyaratan untuk mengikuti Uji Kompetensi Widyaiswara.
+          Gunakan tautan (link) Google Drive atau layanan penyimpanan awan lainnya untuk dokumen Anda.
+          Pastikan tautan dapat diakses oleh publik (Anyone with the link).
+        </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -205,6 +214,7 @@ const CompetencyTest: React.FC = () => {
           </button>
         </div>
       </form>
+      </div>
     </div>
   );
 };
