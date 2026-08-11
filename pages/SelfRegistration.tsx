@@ -6,6 +6,7 @@ import { JobTier, PromotionHistoryItem, DevelopmentHistoryItem, PerformanceHisto
 import PromotionHistoryInput from '../components/PromotionHistoryInput';
 import DevelopmentHistoryInput from '../components/DevelopmentHistoryInput';
 import PerformanceHistoryInput from '../components/PerformanceHistoryInput';
+import CameraCapture from '../components/CameraCapture';
 import { compressImage } from '../utils/imageCompression';
 
 const SelfRegistration: React.FC = () => {
@@ -23,6 +24,7 @@ const SelfRegistration: React.FC = () => {
   const [joinDate, setJoinDate] = useState('');
   const [photoUrl, setPhotoUrl] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [promotionHistory, setPromotionHistory] = useState<PromotionHistoryItem[]>([]);
   const [developmentHistory, setDevelopmentHistory] = useState<DevelopmentHistoryItem[]>([]);
@@ -70,6 +72,24 @@ const SelfRegistration: React.FC = () => {
         console.error("Error compressing image:", error);
         alert("Gagal memproses foto. Pastikan format file didukung (JPG/PNG).");
       }
+    }
+  };
+
+  const handleCameraCapture = async (file: File) => {
+    try {
+      const compressedBase64 = await compressImage(file, 200, 200, 0.6);
+      if (compressedBase64.length > 150000) {
+         alert("Foto masih terlalu besar. Silakan coba lagi.");
+         setIsCameraOpen(false);
+         return;
+      }
+      setPhotoPreview(compressedBase64);
+      setPhotoUrl(compressedBase64);
+      setIsCameraOpen(false);
+    } catch (error) {
+      console.error("Error processing camera image:", error);
+      alert("Gagal memproses foto dari kamera.");
+      setIsCameraOpen(false);
     }
   };
 
@@ -173,12 +193,29 @@ const SelfRegistration: React.FC = () => {
                                 </svg>
                             )}
                         </span>
-                        <label htmlFor="photo-upload" className="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary">
-                            <span>Unggah Foto</span>
-                            <input id="photo-upload" name="photo-upload" type="file" className="sr-only" accept="image/*" onChange={handlePhotoChange} />
-                        </label>
+                        <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3">
+                            <label htmlFor="photo-upload" className="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary text-center">
+                                <span>Unggah File</span>
+                                <input id="photo-upload" name="photo-upload" type="file" className="sr-only" accept="image/*" onChange={handlePhotoChange} />
+                            </label>
+                            <button
+                                type="button"
+                                onClick={() => setIsCameraOpen(true)}
+                                className="bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary flex justify-center items-center"
+                            >
+                                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                Buka Kamera
+                            </button>
+                        </div>
                     </div>
                 </div>
+                
+                {isCameraOpen && (
+                    <CameraCapture 
+                        onCapture={handleCameraCapture} 
+                        onCancel={() => setIsCameraOpen(false)} 
+                    />
+                )}
                 
                 <PromotionHistoryInput history={promotionHistory} onChange={setPromotionHistory} />
 
