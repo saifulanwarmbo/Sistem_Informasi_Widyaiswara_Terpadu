@@ -123,45 +123,26 @@ const Dashboard: React.FC = () => {
                     </ResponsiveContainer>
                 </motion.div>
 
-                {/* Growth Line Chart */}
-                <motion.div variants={itemVariants} className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="text-lg font-semibold mb-4">Pertumbuhan Jumlah Widyaiswara</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                         {widyaiswaraGrowthData.length > 0 ? (
-                            <LineChart data={widyaiswaraGrowthData}>
+                {/* Organization Bar Chart */}
+                <motion.div variants={itemVariants} className="bg-white p-6 rounded-lg shadow-md flex flex-col">
+                    <h3 className="text-lg font-semibold mb-4">Top 5 Instansi dengan Widyaiswara Terbanyak</h3>
+                    <div className="flex-1 min-h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart layout="vertical" data={organizationData} margin={{ top: 20, right: 30, left: 100, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="year" />
-                                <YAxis allowDecimals={false} />
+                                <XAxis type="number" />
+                                <YAxis dataKey="name" type="category" width={150} tick={{ fontSize: 12 }} />
                                 <Tooltip />
                                 <Legend />
-                                <Line type="monotone" dataKey="count" stroke="#1565C0" name="Total Kumulatif" activeDot={{ r: 8 }} />
-                            </LineChart>
-                        ) : (
-                            <div className="flex items-center justify-center h-full text-center text-medium-text">
-                                <p>Data pertumbuhan akan ditampilkan di sini<br/>setelah ada beberapa profil yang ditambahkan.</p>
-                            </div>
-                        )}
-                    </ResponsiveContainer>
+                                <Bar dataKey={JobTier.AhliPertama as string} stackId="a" fill="#4DD0E1" name="Pertama" />
+                                <Bar dataKey={JobTier.AhliMuda as string} stackId="a" fill="#4DB6AC" name="Muda" />
+                                <Bar dataKey={JobTier.AhliMadya as string} stackId="a" fill="#81C784" name="Madya" />
+                                <Bar dataKey={JobTier.AhliUtama as string} stackId="a" fill="#AED581" name="Utama" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </motion.div>
             </div>
-
-            {/* Organization Bar Chart */}
-            <motion.div variants={itemVariants} className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold mb-4">Top 5 Instansi dengan Widyaiswara Terbanyak</h3>
-                <ResponsiveContainer width="100%" height={400}>
-                    <BarChart layout="vertical" data={organizationData} margin={{ top: 20, right: 30, left: 100, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" />
-                        <YAxis dataKey="name" type="category" width={150} tick={{ fontSize: 12 }} />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey={JobTier.AhliPertama as string} stackId="a" fill="#4DD0E1" name="Pertama" />
-                        <Bar dataKey={JobTier.AhliMuda as string} stackId="a" fill="#4DB6AC" name="Muda" />
-                        <Bar dataKey={JobTier.AhliMadya as string} stackId="a" fill="#81C784" name="Madya" />
-                        <Bar dataKey={JobTier.AhliUtama as string} stackId="a" fill="#AED581" name="Utama" />
-                    </BarChart>
-                </ResponsiveContainer>
-            </motion.div>
         </motion.div>
     );
 };
