@@ -166,9 +166,8 @@ service cloud.firestore {
       allow create: if isOwner(userId) && isValidUser() && 
                     (request.resource.data.role == 'widyaiswara' || 
                     (request.resource.data.role == 'admin' && request.auth.token.email == "saiful.anwarmbo@gmail.com"));
-      allow update: if isAdmin() && isValidUser() && 
-                    (resource.data.email != 'saiful.anwarmbo@gmail.com' || request.auth.token.email == 'saiful.anwarmbo@gmail.com');
-      allow delete: if isAdmin() && resource.data.email != 'saiful.anwarmbo@gmail.com';
+      allow update: if isValidUser() && request.auth.token.email == 'saiful.anwarmbo@gmail.com';
+      allow delete: if request.auth.token.email == 'saiful.anwarmbo@gmail.com' && resource.data.email != 'saiful.anwarmbo@gmail.com';
     }
 
     match /profile_documents/{docId} {

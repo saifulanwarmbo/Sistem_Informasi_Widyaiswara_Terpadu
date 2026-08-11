@@ -41,6 +41,11 @@ const ManageAdmins: React.FC = () => {
 
     const toggleRole = async (user: AppUser) => {
         try {
+            if (currentUser?.email !== 'saiful.anwarmbo@gmail.com') {
+                alert('Hanya admin utama yang dapat mengubah peran pengguna.');
+                return;
+            }
+
             // Protect default admin from being demoted
             if (user.email === 'saiful.anwarmbo@gmail.com') {
                 alert('Admin utama tidak dapat diubah perannya.');
@@ -77,6 +82,11 @@ const ManageAdmins: React.FC = () => {
 
     const deleteUser = async (user: AppUser) => {
         try {
+            if (currentUser?.email !== 'saiful.anwarmbo@gmail.com') {
+                alert('Hanya admin utama yang dapat menghapus pengguna.');
+                return;
+            }
+
             if (user.email === 'saiful.anwarmbo@gmail.com') {
                 alert('Admin utama tidak dapat dihapus.');
                 return;
@@ -146,19 +156,23 @@ const ManageAdmins: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             {user.email !== 'saiful.anwarmbo@gmail.com' ? (
                                                 <div className="flex items-center space-x-2">
-                                                    <button
-                                                        onClick={() => toggleRole(user)}
-                                                        className={`px-3 py-1 rounded-md text-white text-xs ${user.role === 'admin' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'}`}
-                                                    >
-                                                        {user.role === 'admin' ? 'Cabut Akses Admin' : 'Jadikan Admin'}
-                                                    </button>
-                                                    {currentUser?.email === 'saiful.anwarmbo@gmail.com' && (
-                                                        <button
-                                                            onClick={() => deleteUser(user)}
-                                                            className="px-3 py-1 rounded-md text-white text-xs bg-red-500 hover:bg-red-600"
-                                                        >
-                                                            Hapus Akun
-                                                        </button>
+                                                    {currentUser?.email === 'saiful.anwarmbo@gmail.com' ? (
+                                                        <>
+                                                            <button
+                                                                onClick={() => toggleRole(user)}
+                                                                className={`px-3 py-1 rounded-md text-white text-xs ${user.role === 'admin' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'}`}
+                                                            >
+                                                                {user.role === 'admin' ? 'Cabut Akses Admin' : 'Jadikan Admin'}
+                                                            </button>
+                                                            <button
+                                                                onClick={() => deleteUser(user)}
+                                                                className="px-3 py-1 rounded-md text-white text-xs bg-red-500 hover:bg-red-600"
+                                                            >
+                                                                Hapus Akun
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <span className="text-gray-400 text-xs italic">Akses dibatasi</span>
                                                     )}
                                                 </div>
                                             ) : (
