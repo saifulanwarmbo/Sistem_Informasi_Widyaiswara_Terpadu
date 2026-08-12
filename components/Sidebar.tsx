@@ -55,9 +55,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
         <div className="w-full flex justify-center mb-2 mt-2">
-          <img src={logoLan} alt="Logo LAN RI" className="h-16 w-auto object-contain drop-shadow-md" />
+          <div className="bg-white p-2 rounded-lg shadow-sm">
+            <img src={logoLan} alt="Logo LAN RI" className="h-12 w-auto object-contain" />
+          </div>
         </div>
-        <h1 className="text-xl font-extrabold tracking-wider text-center text-white">SIWITA</h1>
+        <h1 className="text-xl font-extrabold tracking-wider text-center text-white mt-2">SIWITA</h1>
       </div>
       <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
         {navItems.map(item => (
