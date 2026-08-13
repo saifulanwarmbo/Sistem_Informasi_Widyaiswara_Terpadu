@@ -1,0 +1,111 @@
+
+/app/applet/components/CameraCapture.tsx
+  23:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  24:7   warning  Unexpected console statement              no-console
+
+/app/applet/components/EditProfileModal.tsx
+  29:11  warning  Unexpected console statement  no-console
+
+/app/applet/components/ErrorBoundary.tsx
+  24:5   warning  Unexpected console statement              no-console
+  59:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/app/applet/components/Header.tsx
+  7:10  warning  'ICONS' is defined but never used  @typescript-eslint/no-unused-vars
+
+/app/applet/components/ProfileCard.tsx
+  52:9  warning  Unexpected console statement  no-console
+
+/app/applet/components/ProfileDetailModal.tsx
+    1:28  warning  'useRef' is defined but never used        @typescript-eslint/no-unused-vars
+    3:10  warning  'ICONS' is defined but never used         @typescript-eslint/no-unused-vars
+  136:7   warning  Unexpected console statement              no-console
+  161:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/app/applet/contexts/AuthContext.tsx
+  57:11  warning  Unexpected console statement  no-console
+  66:11  warning  Unexpected console statement  no-console
+
+/app/applet/contexts/CompetencyContext.tsx
+   20:13   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   23:104  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   33:3    warning  Unexpected console statement              no-console
+   71:7    warning  Unexpected console statement              no-console
+   79:7    warning  Unexpected console statement              no-console
+  100:25   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/app/applet/contexts/WidyaiswaraContext.tsx
+   81:17  warning  'isLoggedIn' is assigned a value but never used      @typescript-eslint/no-unused-vars
+   91:7   warning  Unexpected console statement                         no-console
+  120:27  warning  'documentBase64' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  131:27  warning  'documentBase64' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  150:7   warning  Unexpected console statement                         no-console
+  162:7   warning  Unexpected console statement                         no-console
+  175:27  warning  'documentBase64' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  186:27  warning  'documentBase64' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  205:7   warning  Unexpected console statement                         no-console
+  214:7   warning  Unexpected console statement                         no-console
+  227:11  warning  Unexpected console statement                         no-console
+  235:5   warning  Unexpected console statement                         no-console
+
+/app/applet/pages/AuditLogs.tsx
+   6:10  warning  'ICONS' is defined but never used         @typescript-eslint/no-unused-vars
+  31:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:13  warning  Unexpected console statement              no-console
+
+/app/applet/pages/CompetencyTest.tsx
+   1:27  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+  74:7   warning  Unexpected console statement           no-console
+
+/app/applet/pages/CompetencyTestFlyer.tsx
+  23:9  warning  Unexpected console statement  no-console
+  53:7  warning  Unexpected console statement  no-console
+  66:9  warning  Unexpected console statement  no-console
+
+/app/applet/pages/Dashboard.tsx
+   2:113  warning  'LineChart' is defined but never used                       @typescript-eslint/no-unused-vars
+   2:124  warning  'Line' is defined but never used                            @typescript-eslint/no-unused-vars
+  36:11   warning  'widyaiswaraGrowthData' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/app/applet/pages/DevelopmentHub.tsx
+   75:13  warning  Unexpected console statement  no-console
+   88:13  warning  Unexpected console statement  no-console
+  121:13  warning  Unexpected console statement  no-console
+  134:13  warning  Unexpected console statement  no-console
+
+/app/applet/pages/InputData.tsx
+   50:9   warning  Unexpected console statement              no-console
+   82:9   warning  Unexpected console statement              no-console
+  100:7   warning  Unexpected console statement              no-console
+  141:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  142:7   warning  Unexpected console statement              no-console
+
+/app/applet/pages/Login.tsx
+  39:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  40:7   warning  Unexpected console statement              no-console
+
+/app/applet/pages/ManageAdmins.tsx
+   34:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   35:13  warning  Unexpected console statement              no-console
+   78:13  warning  Unexpected console statement              no-console
+  114:13  warning  Unexpected console statement              no-console
+
+/app/applet/pages/Profiles.tsx
+  44:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  61:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/app/applet/pages/SelfRegistration.tsx
+   72:9   warning  Unexpected console statement              no-console
+   90:7   warning  Unexpected console statement              no-console
+  130:19  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  131:7   warning  Unexpected console statement              no-console
+
+/app/applet/pages/VerifyCompetency.tsx
+  38:7  warning  Unexpected console statement  no-console
+  60:7  warning  Unexpected console statement  no-console
+
+/app/applet/utils/auditLogger.ts
+  26:9  warning  Unexpected console statement  no-console
+
+✖ 66 problems (0 errors, 66 warnings)
+

@@ -186,8 +186,7 @@ const Profiles: React.FC = () => {
           animate="show"
         >
           {filteredProfiles.map(profile => (
-            <ProfileCard 
-                key={profile.id} 
+            <ProfileCard key={profile.id} 
                 profile={profile} 
                 isAdmin={isAdmin}
                 currentUserId={appUser?.id}

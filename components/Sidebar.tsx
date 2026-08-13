@@ -62,8 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
       <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
         {navItems.map(item => (
-          <NavLink
-            key={item.path}
+          <NavLink key={item.path}
             to={item.path}
             onClick={handleLinkClick}
             className={({ isActive }) => `${linkClasses} ${isActive ? activeLinkClasses : ''}`}
@@ -78,8 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                 <hr className="my-3 border-gray-200"/>
                 <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Admin Menu</p>
                 {adminNavItems.map(item => (
-                     <NavLink
-                        key={item.path}
+                     <NavLink key={item.path}
                         to={item.path}
                         onClick={handleLinkClick}
                         className={({ isActive }) => `${linkClasses} ${isActive ? activeLinkClasses : ''}`}

@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WidyaiswaraProfile, JobTier, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
-import { ICONS } from '../constants'; // Re-use an icon if we want, or just an SVG for print
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
 
 interface ProfileDetailModalProps {
@@ -48,7 +47,8 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     // Open window synchronously to avoid popup blockers for async operations
     const newWindow = window.open('', '_blank');
     if (newWindow) {
-        newWindow.document.write('<p style="font-family: sans-serif; padding: 20px;">Memuat dokumen...</p>');
+        newWindow.document.title = 'Pratinjau Dokumen';
+        newWindow.document.body.innerHTML = '<p id="loading-msg" style="font-family: sans-serif; padding: 20px;">Memuat dokumen...</p>';
     }
 
     setLoadingDocId(id);
@@ -88,27 +88,36 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
       const url = URL.createObjectURL(blob);
       
       if (newWindow) {
-          newWindow.document.open();
+          const loadingMsg = newWindow.document.getElementById('loading-msg');
+          if (loadingMsg) loadingMsg.remove();
+          
           if (mime.includes('image')) {
-              newWindow.document.write(`
-                <html>
-                  <head><title>Pratinjau Dokumen</title></head>
-                  <body style="margin: 0; display: flex; justify-content: center; align-items: center; background-color: #0f172a; height: 100vh;">
-                    <img src="${url}" style="max-width: 100%; max-height: 100vh; object-fit: contain;" />
-                  </body>
-                </html>
-              `);
+              newWindow.document.body.style.margin = '0';
+              newWindow.document.body.style.display = 'flex';
+              newWindow.document.body.style.justifyContent = 'center';
+              newWindow.document.body.style.alignItems = 'center';
+              newWindow.document.body.style.backgroundColor = '#0f172a';
+              newWindow.document.body.style.height = '100vh';
+              
+              const img = newWindow.document.createElement('img');
+              img.src = url;
+              img.style.maxWidth = '100%';
+              img.style.maxHeight = '100vh';
+              img.style.objectFit = 'contain';
+              newWindow.document.body.appendChild(img);
           } else {
-              newWindow.document.write(`
-                <html>
-                  <head><title>Pratinjau Dokumen</title></head>
-                  <body style="margin: 0; padding: 0; overflow: hidden; background-color: #525659;">
-                    <iframe src="${url}" style="width: 100%; height: 100vh; border: none;"></iframe>
-                  </body>
-                </html>
-              `);
+              newWindow.document.body.style.margin = '0';
+              newWindow.document.body.style.padding = '0';
+              newWindow.document.body.style.overflow = 'hidden';
+              newWindow.document.body.style.backgroundColor = '#525659';
+              
+              const iframe = newWindow.document.createElement('iframe');
+              iframe.src = url;
+              iframe.style.width = '100%';
+              iframe.style.height = '100vh';
+              iframe.style.border = 'none';
+              newWindow.document.body.appendChild(iframe);
           }
-          newWindow.document.close();
           
           // Clean up memory after the iframe/image has had time to load
           setTimeout(() => URL.revokeObjectURL(url), 60000); 
@@ -148,7 +157,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     </div>
   );
 
-  const PromHistoryItem: React.FC<{ item: any }> = ({ item }) => (
+  const PromHistoryItem: React.FC<{ item: { id: string; year: string; [key: string]: string } }> = ({ item }) => (
     <div className="py-3 border-b border-gray-100 last:border-b-0">
         <p className="font-semibold text-medium-text">{item.newTier} <span className="font-normal text-gray-500">- {item.year}</span></p>
         {item.notes && <p className="text-sm text-gray-500 italic mt-1 mb-1">Keterangan: {item.notes}</p>}
