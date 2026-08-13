@@ -70,11 +70,13 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
           if (newWindow) newWindow.close();
           return;
       }
+      
       const mimeMatch = arr[0].match(/:(.*?);/);
       if (!mimeMatch) {
           if (newWindow) newWindow.close();
           return;
       }
+      
       const mime = mimeMatch[1];
       const bstr = atob(arr[1]);
       let n = bstr.length;
@@ -86,42 +88,45 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
       const url = URL.createObjectURL(blob);
       
       if (newWindow) {
-          newWindow.location.href = url;
-          setTimeout(() => URL.revokeObjectURL(url), 10000);
+          newWindow.document.open();
+          if (mime.includes('image')) {
+              newWindow.document.write(`
+                <html>
+                  <head><title>Pratinjau Dokumen</title></head>
+                  <body style="margin: 0; display: flex; justify-content: center; align-items: center; background-color: #0f172a; height: 100vh;">
+                    <img src="${url}" style="max-width: 100%; max-height: 100vh; object-fit: contain;" />
+                  </body>
+                </html>
+              `);
+          } else {
+              newWindow.document.write(`
+                <html>
+                  <head><title>Pratinjau Dokumen</title></head>
+                  <body style="margin: 0; padding: 0; overflow: hidden; background-color: #525659;">
+                    <iframe src="${url}" style="width: 100%; height: 100vh; border: none;"></iframe>
+                  </body>
+                </html>
+              `);
+          }
+          newWindow.document.close();
+          
+          // Clean up memory after the iframe/image has had time to load
+          setTimeout(() => URL.revokeObjectURL(url), 60000); 
       } else {
-          // Fallback
+          // Fallback if popup was blocked initially
           const a = document.createElement('a');
           a.href = url;
           a.target = '_blank';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          setTimeout(() => URL.revokeObjectURL(url), 100);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
     } catch (e) {
-      console.error("Error opening PDF", e);
+      console.error("Error opening document", e);
       if (newWindow) newWindow.close();
       alert("Tidak dapat membuka dokumen.");
     }
-  };
-
-  const handleDownloadDocument = async (id: string, fileName: string, fallbackBase64?: string) => {
-    setLoadingDocId(id);
-    let base64Data = await getDocument(id);
-    if (!base64Data && fallbackBase64) {
-        base64Data = fallbackBase64;
-    }
-    setLoadingDocId(null);
-    if (!base64Data) {
-        alert("Dokumen tidak ditemukan atau terjadi kesalahan.");
-        return;
-    }
-    const a = document.createElement('a');
-    a.href = base64Data;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
   };
 
   const DevHistoryItem: React.FC<{ item: DevelopmentHistoryItem }> = ({ item }) => (
@@ -137,12 +142,6 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               {loadingDocId === item.id ? 'Memuat...' : 'Lihat Dokumen'}
-            </button>
-            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleDownloadDocument(item.id, item.documentName!, item.documentBase64)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-              </svg>
-              Unduh ({item.documentName})
             </button>
           </div>
         )}
@@ -162,12 +161,6 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               {loadingDocId === item.id ? 'Memuat...' : 'Lihat Dokumen'}
-            </button>
-            <button type="button" disabled={loadingDocId === item.id} onClick={() => handleDownloadDocument(item.id, item.documentName!, item.documentBase64)} className="inline-flex items-center text-sm text-primary hover:text-secondary disabled:opacity-50">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-              </svg>
-              Unduh ({item.documentName})
             </button>
           </div>
         )}
@@ -306,7 +299,8 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
           </div>
         </div>
       </div>
-    </>
+    
+      </>
   );
 };
 
