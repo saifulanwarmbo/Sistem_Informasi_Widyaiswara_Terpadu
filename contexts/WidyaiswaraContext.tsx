@@ -78,7 +78,6 @@ const WidyaiswaraContext = createContext<WidyaiswaraContextType | undefined>(und
 
 export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [profiles, setProfiles] = useState<WidyaiswaraProfile[]>([]);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const { user, isLoggedIn, isAdmin } = useAuth();
 
   useEffect(() => {
@@ -95,10 +94,8 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
     return () => unsubscribe();
   }, []);
 
-  // Effect to recalculate organizations whenever profiles change
-  useEffect(() => {
-      setOrganizations(calculateOrganizations(profiles, []));
-  }, [profiles]);
+  // Memoize organizations calculation
+  const organizations = useMemo(() => calculateOrganizations(profiles, []), [profiles]);
 
   const addProfile = async (profileData: Omit<WidyaiswaraProfile, 'id' | 'createdAt' | 'ownerId'>) => {
     if (!user) return;

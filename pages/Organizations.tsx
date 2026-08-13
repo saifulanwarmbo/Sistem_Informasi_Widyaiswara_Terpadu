@@ -7,9 +7,11 @@ const Organizations: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const { organizations } = useWidyaiswara();
 
-    const filteredOrganizations = organizations.filter(org =>
-        org.name.toLowerCase().includes(searchTerm.toLowerCase())
-    ).sort((a,b) => b.total - a.total);
+    const filteredOrganizations = React.useMemo(() => {
+        return organizations.filter(org =>
+            org.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ).sort((a,b) => b.total - a.total);
+    }, [organizations, searchTerm]);
 
     return (
         <div className="space-y-6">

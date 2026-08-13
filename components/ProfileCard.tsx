@@ -6,14 +6,17 @@ import { ICONS } from '../constants';
 interface ProfileCardProps {
   profile: WidyaiswaraProfile;
   isAdmin?: boolean;
+  currentUserId?: string;
   onDelete?: (profile: WidyaiswaraProfile) => void;
   onPhotoChange?: (id: string, photoDataUrl: string) => void;
   onEdit?: (profile: WidyaiswaraProfile) => void;
   onViewDetails?: (profile: WidyaiswaraProfile) => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, onDelete, onPhotoChange, onEdit, onViewDetails }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, currentUserId, onDelete, onPhotoChange, onEdit, onViewDetails }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const canEdit = isAdmin || (currentUserId && profile.ownerId === currentUserId);
 
   const getTierBadgeColor = (tier: JobTier): string => {
     switch (tier) {
@@ -104,7 +107,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, onDelete, o
         <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-gray-900"></div>
       </div>
 
-      {isAdmin && (
+      {canEdit && (
         <div className="absolute top-2 right-2 flex space-x-1 z-10">
           <button 
             onClick={(e) => {
@@ -135,8 +138,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, onDelete, o
               className="h-16 w-16 rounded-full object-cover ring-2 ring-secondary"
               src={profile.photoUrl}
               alt={profile.name}
+              loading="lazy"
             />
-            {isAdmin && (
+            {canEdit && (
               <>
                 <div
                   onClick={handlePhotoEditClick}
@@ -206,4 +210,4 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, onDelete, o
   );
 };
 
-export default ProfileCard;
+export default React.memo(ProfileCard);

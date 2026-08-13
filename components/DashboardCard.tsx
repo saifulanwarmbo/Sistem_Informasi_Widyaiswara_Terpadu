@@ -29,4 +29,4 @@ const DashboardCard: React.FC<DashboardCardProps> = ({ title, value, icon, color
   );
 };
 
-export default DashboardCard;
+export default React.memo(DashboardCard);

@@ -12,7 +12,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 
 const Profiles: React.FC = () => {
   const { profiles, deleteProfile, updateProfilePhoto, updateProfile } = useWidyaiswara();
-  const { isLoggedIn, isAdmin } = useAuth();
+  const { isLoggedIn, isAdmin, appUser } = useAuth();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTier, setSelectedTier] = useState<JobTier | 'All'>('All');
@@ -190,6 +190,7 @@ const Profiles: React.FC = () => {
                 key={profile.id} 
                 profile={profile} 
                 isAdmin={isAdmin}
+                currentUserId={appUser?.id}
                 onDelete={handleDeleteRequest}
                 onPhotoChange={updateProfilePhoto}
                 onEdit={setEditingProfile}

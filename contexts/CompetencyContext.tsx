@@ -141,8 +141,17 @@ export const CompetencyProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
+  const value = React.useMemo(() => ({
+    registrations,
+    notifications,
+    submitRegistration,
+    updateRegistrationStatus,
+    deleteRegistration,
+    markNotificationRead
+  }), [registrations, notifications]);
+
   return (
-    <CompetencyContext.Provider value={{ registrations, notifications, submitRegistration, updateRegistrationStatus, deleteRegistration, markNotificationRead }}>
+    <CompetencyContext.Provider value={value}>
       {children}
     </CompetencyContext.Provider>
   );

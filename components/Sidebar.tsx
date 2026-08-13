@@ -41,26 +41,25 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     if (window.innerWidth < 768) setIsOpen(false);
   };
 
-  const linkClasses = "flex items-center px-4 py-3 text-gray-300 hover:bg-secondary hover:text-white transition-colors duration-200 rounded-md";
-  const activeLinkClasses = "bg-secondary text-white border-l-4 border-accent rounded-none";
+  const linkClasses = "flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors duration-200 rounded-md";
+  const activeLinkClasses = "bg-blue-100 text-primary border-l-4 border-primary rounded-none font-semibold";
 
   return (
     <div className={`
-      fixed inset-y-0 left-0 z-30 w-64 bg-primary text-white transform transition-transform duration-300 ease-in-out flex flex-col
+      fixed inset-y-0 left-0 z-30 w-64 bg-white text-gray-800 border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col
       md:relative md:translate-x-0
       ${isOpen ? 'translate-x-0' : '-translate-x-full'}
     `}>
-      <div className="flex flex-col items-center justify-center px-4 py-6 border-b border-blue-800 relative">
-        <button onClick={() => setIsOpen(false)} className="md:hidden absolute top-4 right-4 text-gray-300 hover:text-white focus:outline-none">
+      <div className="flex flex-col items-center justify-center px-4 py-6 border-b border-gray-200 relative">
+        <button onClick={() => setIsOpen(false)} className="md:hidden absolute top-4 right-4 text-gray-500 hover:text-gray-800 focus:outline-none">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
         <div className="w-full flex justify-center mb-2 mt-2">
-          <div className="bg-white p-2 rounded-lg shadow-sm">
-            <img src={logoLan} alt="Logo LAN RI" className="h-12 w-auto object-contain" />
-          </div>
+          <img src={logoLan} alt="Logo LAN RI" className="h-14 w-auto object-contain" />
         </div>
-        <h1 className="text-xl font-extrabold tracking-wider text-center text-white mt-2">SIWITA</h1>
+        <h1 className="text-xl font-extrabold tracking-wider text-center text-primary mt-2">SIWITA</h1>
       </div>
+
       <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
         {navItems.map(item => (
           <NavLink
@@ -73,10 +72,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             <span className="ml-3">{item.label}</span>
           </NavLink>
         ))}
+
         {isLoggedIn && isAdmin && (
             <>
-                <hr className="my-3 border-blue-700"/>
-                <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">Admin Menu</p>
+                <hr className="my-3 border-gray-200"/>
+                <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Admin Menu</p>
                 {adminNavItems.map(item => (
                      <NavLink
                         key={item.path}
@@ -91,16 +91,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </>
         )}
       </nav>
-       <div className="px-4 py-4 border-t border-blue-800">
+
+       <div className="px-4 py-4 border-t border-gray-200">
           {isLoggedIn && (
-             <button onClick={handleLogout} className="w-full text-left flex items-center px-2 py-2 text-gray-300 hover:bg-red-700 hover:text-white rounded-md transition-colors duration-200">
+             <button onClick={handleLogout} className="w-full text-left flex items-center px-2 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-md transition-colors duration-200">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                <span className="ml-3">Logout</span>
+                <span className="ml-3 font-medium">Logout</span>
              </button>
           )}
-          <div className="text-xs text-gray-400 mt-4">
+          <div className="text-xs text-gray-400 mt-4 text-center">
             <p>Dev by Saiful Anwar</p>
-            <p>@ 2026 All Right Reserved</p>
+            <p>&copy; 2026 All Right Reserved</p>
           </div>
       </div>
     </div>

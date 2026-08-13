@@ -7,23 +7,25 @@ import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
 const JobTiers: React.FC = () => {
   const { profiles } = useWidyaiswara();
 
-  const tierData = Object.values(JobTier).map(tier => {
-    const count = profiles.filter(p => p.tier === tier).length;
-    let minCredit = 0;
-    let color = '';
-    switch(tier) {
-        case JobTier.AhliPertama: minCredit = 100; color = '#4DD0E1'; break;
-        case JobTier.AhliMuda: minCredit = 200; color = '#4DB6AC'; break;
-        case JobTier.AhliMadya: minCredit = 400; color = '#81C784'; break;
-        case JobTier.AhliUtama: minCredit = 850; color = '#AED581'; break;
-    }
-    return {
-        name: tier,
-        'Jumlah Widyaiswara': count,
-        'Minimal Angka Kredit': minCredit,
-        fill: color
-    }
-  });
+  const tierData = React.useMemo(() => {
+    return Object.values(JobTier).map(tier => {
+      const count = profiles.filter(p => p.tier === tier).length;
+      let minCredit = 0;
+      let color = '';
+      switch(tier) {
+          case JobTier.AhliPertama: minCredit = 100; color = '#4DD0E1'; break;
+          case JobTier.AhliMuda: minCredit = 200; color = '#4DB6AC'; break;
+          case JobTier.AhliMadya: minCredit = 400; color = '#81C784'; break;
+          case JobTier.AhliUtama: minCredit = 850; color = '#AED581'; break;
+      }
+      return {
+          name: tier,
+          'Jumlah Widyaiswara': count,
+          'Minimal Angka Kredit': minCredit,
+          fill: color
+      }
+    });
+  }, [profiles]);
 
   return (
     <div className="space-y-8">
