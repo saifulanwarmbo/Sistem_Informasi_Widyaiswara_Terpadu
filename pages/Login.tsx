@@ -21,20 +21,8 @@ const Login: React.FC = () => {
     try {
       await login();
       
-      // Cek apakah pengguna sudah memiliki profil Widyaiswara
-      if (auth.currentUser) {
-        const profileRef = doc(db, 'profiles', auth.currentUser.uid);
-        const profileSnap = await getDoc(profileRef);
-        
-        if (profileSnap.exists()) {
-          navigate('/dashboard');
-        } else {
-          // Jika belum ada profil, arahkan ke registrasi mandiri
-          navigate('/self-registration');
-        }
-      } else {
-        navigate('/dashboard');
-      }
+      // Arahkan pengguna ke halaman dashboard setelah berhasil login
+      navigate('/dashboard');
       
     } catch (err: any) {
       console.error("Login error details:", err);

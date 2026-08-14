@@ -11,6 +11,8 @@ interface ProfileDetailModalProps {
 const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose, profile }) => {
   const { getDocument } = useWidyaiswara();
   const [loadingDocId, setLoadingDocId] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewType, setPreviewType] = useState<'image' | 'pdf' | null>(null);
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
@@ -44,13 +46,6 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
   );
   
   const handleViewDocument = async (id: string, fallbackBase64?: string) => {
-    // Open window synchronously to avoid popup blockers for async operations
-    const newWindow = window.open('', '_blank');
-    if (newWindow) {
-        newWindow.document.title = 'Pratinjau Dokumen';
-        newWindow.document.body.innerHTML = '<p id="loading-msg" style="font-family: sans-serif; padding: 20px;">Memuat dokumen...</p>';
-    }
-
     setLoadingDocId(id);
     let base64Data = await getDocument(id);
     if (!base64Data && fallbackBase64) {
@@ -59,7 +54,6 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     setLoadingDocId(null);
     
     if (!base64Data) {
-        if (newWindow) newWindow.close();
         alert("Dokumen tidak ditemukan atau terjadi kesalahan.");
         return;
     }
@@ -67,13 +61,11 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     try {
       const arr = base64Data.split(',');
       if (arr.length < 2) {
-          if (newWindow) newWindow.close();
           return;
       }
       
       const mimeMatch = arr[0].match(/:(.*?);/);
       if (!mimeMatch) {
-          if (newWindow) newWindow.close();
           return;
       }
       
@@ -87,53 +79,9 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
       const blob = new Blob([u8arr], { type: mime });
       const url = URL.createObjectURL(blob);
       
-      if (newWindow) {
-          const loadingMsg = newWindow.document.getElementById('loading-msg');
-          if (loadingMsg) loadingMsg.remove();
-          
-          if (mime.includes('image')) {
-              newWindow.document.body.style.margin = '0';
-              newWindow.document.body.style.display = 'flex';
-              newWindow.document.body.style.justifyContent = 'center';
-              newWindow.document.body.style.alignItems = 'center';
-              newWindow.document.body.style.backgroundColor = '#0f172a';
-              newWindow.document.body.style.height = '100vh';
-              
-              const img = newWindow.document.createElement('img');
-              img.src = url;
-              img.style.maxWidth = '100%';
-              img.style.maxHeight = '100vh';
-              img.style.objectFit = 'contain';
-              newWindow.document.body.appendChild(img);
-          } else {
-              newWindow.document.body.style.margin = '0';
-              newWindow.document.body.style.padding = '0';
-              newWindow.document.body.style.overflow = 'hidden';
-              newWindow.document.body.style.backgroundColor = '#525659';
-              
-              const iframe = newWindow.document.createElement('iframe');
-              iframe.src = url;
-              iframe.style.width = '100%';
-              iframe.style.height = '100vh';
-              iframe.style.border = 'none';
-              newWindow.document.body.appendChild(iframe);
-          }
-          
-          // Clean up memory after the iframe/image has had time to load
-          setTimeout(() => URL.revokeObjectURL(url), 60000); 
-      } else {
-          // Fallback if popup was blocked initially
-          const a = document.createElement('a');
-          a.href = url;
-          a.target = '_blank';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-      }
+      setPreviewType(mime.includes('image') ? 'image' : 'pdf');
+      setPreviewUrl(url);
     } catch (e) {
-      console.error("Error opening document", e);
-      if (newWindow) newWindow.close();
       alert("Tidak dapat membuka dokumen.");
     }
   };
@@ -309,7 +257,44 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
         </div>
       </div>
     
-      </>
+      
+        {previewUrl && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 print:hidden">
+                <div className="bg-white rounded-lg w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden relative">
+                    <div className="flex justify-between items-center p-4 border-b">
+                        <h3 className="font-semibold text-lg">Pratinjau Dokumen</h3>
+                        <div className="flex items-center space-x-4">
+                            <a 
+                                href={previewUrl} 
+                                download="dokumen" 
+                                className="px-4 py-2 bg-primary text-white rounded hover:bg-secondary transition-colors text-sm font-medium"
+                            >
+                                Unduh
+                            </a>
+                            <button 
+                                onClick={() => {
+                                    URL.revokeObjectURL(previewUrl);
+                                    setPreviewUrl(null);
+                                }} 
+                                className="text-gray-500 hover:text-red-500 transition-colors"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div className="flex-1 overflow-auto bg-gray-100 flex items-center justify-center p-4">
+                        {previewType === 'image' ? (
+                            <img src={previewUrl} alt="Dokumen" className="max-w-full max-h-full object-contain" />
+                        ) : (
+                            <iframe src={previewUrl} className="w-full h-full border-none shadow-sm bg-white" title="Pratinjau PDF" />
+                        )}
+                    </div>
+                </div>
+            </div>
+        )}
+</>
   );
 };
 
