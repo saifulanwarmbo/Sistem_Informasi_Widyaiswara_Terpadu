@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCompetency } from '../contexts/CompetencyContext';
@@ -7,6 +8,7 @@ import { ICONS } from '../constants';
 import FlyerSection from './CompetencyTestFlyer';
 
 const CompetencyTest: React.FC = () => {
+  const { showToast } = useToast();
   const { registrations, submitRegistration } = useCompetency();
   const { profiles } = useWidyaiswara();
   const { user, isLoggedIn } = useAuth();
@@ -52,11 +54,11 @@ const CompetencyTest: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userProfile) {
-      alert("Anda harus membuat profil Widyaiswara terlebih dahulu.");
+      showToast("Anda harus membuat profil Widyaiswara terlebih dahulu.", 'error');
       return;
     }
     if (documents.length === 0) {
-      alert("Silakan tambahkan minimal satu dokumen persyaratan.");
+      showToast("Silakan tambahkan minimal satu dokumen persyaratan.", 'error');
       return;
     }
 
@@ -69,10 +71,10 @@ const CompetencyTest: React.FC = () => {
         documents: documents,
         submissionDate: Date.now()
       });
-      alert("Pendaftaran Uji Kompetensi berhasil dikirim!");
+      showToast("Pendaftaran Uji Kompetensi berhasil dikirim!", 'success');
     } catch (error) {
       console.error("Error submitting registration", error);
-      alert("Terjadi kesalahan saat mengirim pendaftaran.");
+      showToast("Terjadi kesalahan saat mengirim pendaftaran.", 'error');
     } finally {
       setIsSubmitting(false);
     }

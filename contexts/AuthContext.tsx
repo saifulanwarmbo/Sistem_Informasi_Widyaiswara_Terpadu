@@ -81,6 +81,46 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, []);
 
+
+  // Auto-logout feature for 30 minutes of inactivity
+  useEffect(() => {
+    if (!user) return; // Only track inactivity when logged in
+
+    let inactivityTimer: NodeJS.Timeout;
+    let throttleTimer: NodeJS.Timeout | null = null;
+    const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutes
+
+    const resetInactivityTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        console.log("User inactive for 30 minutes, logging out...");
+        logoutFromFirebase();
+      }, INACTIVITY_LIMIT);
+    };
+
+    const handleActivity = () => {
+      if (throttleTimer) return;
+      // Throttle activity checks to max 1 per second for performance
+      throttleTimer = setTimeout(() => {
+        resetInactivityTimer();
+        throttleTimer = null;
+      }, 1000);
+    };
+
+    // Initialize timer on mount or login
+    resetInactivityTimer();
+
+    // Listeners for user interaction
+    const events = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart'];
+    events.forEach(event => document.addEventListener(event, handleActivity, { passive: true }));
+
+    return () => {
+      clearTimeout(inactivityTimer);
+      if (throttleTimer) clearTimeout(throttleTimer);
+      events.forEach(event => document.removeEventListener(event, handleActivity));
+    };
+  }, [user]);
+
   const login = async () => {
     await loginWithGoogle();
   };

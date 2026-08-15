@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, onSnapshot, doc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -6,6 +7,7 @@ import { DevelopmentResource, Agenda } from '../types';
 import { logAdminAction } from '../utils/auditLogger';
 
 const DevelopmentHub: React.FC = () => {
+  const { showToast } = useToast();
     const { isAdmin, user } = useAuth();
     
     const [resources, setResources] = useState<DevelopmentResource[]>([]);
@@ -73,7 +75,7 @@ const DevelopmentHub: React.FC = () => {
             setResourceForm({ title: '', description: '', link: '' });
         } catch (error) {
             console.error("Error saving resource:", error);
-            alert("Gagal menyimpan resource.");
+            showToast("Gagal menyimpan resource.", 'error');
         }
     };
 
@@ -86,7 +88,7 @@ const DevelopmentHub: React.FC = () => {
             await logAdminAction(user.uid, user.email || 'Unknown', 'DELETE_RESOURCE', id, `Resource: ${title}`);
         } catch (error) {
             console.error("Error deleting resource:", error);
-            alert("Gagal menghapus resource.");
+            showToast("Gagal menghapus resource.", 'error');
         }
     };
 
@@ -119,7 +121,7 @@ const DevelopmentHub: React.FC = () => {
             setAgendaForm({ title: '', date: '', location: '' });
         } catch (error) {
             console.error("Error saving agenda:", error);
-            alert("Gagal menyimpan agenda.");
+            showToast("Gagal menyimpan agenda.", 'error');
         }
     };
 
@@ -132,7 +134,7 @@ const DevelopmentHub: React.FC = () => {
             await logAdminAction(user.uid, user.email || 'Unknown', 'DELETE_AGENDA', id, `Agenda: ${title}`);
         } catch (error) {
             console.error("Error deleting agenda:", error);
-            alert("Gagal menghapus agenda.");
+            showToast("Gagal menghapus agenda.", 'error');
         }
     };
 

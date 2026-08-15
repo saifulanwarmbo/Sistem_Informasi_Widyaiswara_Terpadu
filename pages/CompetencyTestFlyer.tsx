@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -5,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { ICONS } from '../constants';
 
 const FlyerSection: React.FC = () => {
+  const { showToast } = useToast();
   const { isAdmin } = useAuth();
   const [flyerUrl, setFlyerUrl] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +34,7 @@ const FlyerSection: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        alert("Ukuran gambar terlalu besar. Maksimal 2MB.");
+        showToast("Ukuran gambar terlalu besar. Maksimal 2MB.", 'error');
         return;
       }
       const reader = new FileReader();
@@ -48,10 +50,10 @@ const FlyerSection: React.FC = () => {
       const docRef = doc(db, 'settings', 'competency_flyer');
       await setDoc(docRef, { url: flyerUrl });
       setIsEditing(false);
-      alert("Flyer berhasil disimpan!");
+      showToast("Flyer berhasil disimpan!", 'success');
     } catch (error) {
       console.error("Error saving flyer:", error);
-      alert("Gagal menyimpan flyer.");
+      showToast("Gagal menyimpan flyer.", 'error');
     }
   };
 

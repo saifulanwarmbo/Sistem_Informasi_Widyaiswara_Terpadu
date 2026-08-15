@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useRef } from 'react';
 import { motion } from 'motion/react';
 import { WidyaiswaraProfile, JobTier } from '../types';
@@ -14,6 +15,7 @@ interface ProfileCardProps {
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, currentUserId, onDelete, onPhotoChange, onEdit, onViewDetails }) => {
+  const { showToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const canEdit = isAdmin || (currentUserId && profile.ownerId === currentUserId);
@@ -37,20 +39,20 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, isAdmin, currentUser
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (file.size > 5 * 1024 * 1024) {
-        alert("Ukuran foto terlalu besar (maksimal 5MB sebelum kompresi).");
+        showToast("Ukuran foto terlalu besar (maksimal 5MB sebelum kompresi).", 'error');
         return;
       }
       try {
         const { compressImage } = await import('../utils/imageCompression');
         const compressedBase64 = await compressImage(file, 200, 200, 0.6);
         if (compressedBase64.length > 150000) {
-           alert("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.");
+           showToast("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.", 'error');
            return;
         }
         onPhotoChange?.(profile.id, compressedBase64);
       } catch (error) {
         console.error("Error compressing image:", error);
-        alert("Gagal memproses foto. Pastikan format file didukung (JPG/PNG).");
+        showToast("Gagal memproses foto. Pastikan format file didukung (JPG/PNG).", 'error');
       }
     }
   };

@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
@@ -10,6 +11,7 @@ import CameraCapture from '../components/CameraCapture';
 import { compressImage } from '../utils/imageCompression';
 
 const SelfRegistration: React.FC = () => {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const { addProfile, profiles } = useWidyaiswara();
   const { isLoggedIn } = useAuth();
@@ -55,7 +57,7 @@ const SelfRegistration: React.FC = () => {
       
       // Check original file size. If it's already small enough, we can still try to compress it.
       if (file.size > 5 * 1024 * 1024) {
-        alert("Ukuran foto terlalu besar (maksimal 5MB sebelum kompresi).");
+        showToast("Ukuran foto terlalu besar (maksimal 5MB sebelum kompresi).", 'error');
         return;
       }
 
@@ -63,14 +65,14 @@ const SelfRegistration: React.FC = () => {
         const compressedBase64 = await compressImage(file, 200, 200, 0.6);
         // Ensure the base64 string is small enough
         if (compressedBase64.length > 150000) {
-           alert("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.");
+           showToast("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.", 'error');
            return;
         }
         setPhotoPreview(compressedBase64);
         setPhotoUrl(compressedBase64);
       } catch (error) {
         console.error("Error compressing image:", error);
-        alert("Gagal memproses foto. Pastikan format file didukung (JPG/PNG).");
+        showToast("Gagal memproses foto. Pastikan format file didukung (JPG/PNG).", 'error');
       }
     }
   };
@@ -79,7 +81,7 @@ const SelfRegistration: React.FC = () => {
     try {
       const compressedBase64 = await compressImage(file, 200, 200, 0.6);
       if (compressedBase64.length > 150000) {
-         alert("Foto masih terlalu besar. Silakan coba lagi.");
+         showToast("Foto masih terlalu besar. Silakan coba lagi.", 'error');
          setIsCameraOpen(false);
          return;
       }
@@ -88,7 +90,7 @@ const SelfRegistration: React.FC = () => {
       setIsCameraOpen(false);
     } catch (error) {
       console.error("Error processing camera image:", error);
-      alert("Gagal memproses foto dari kamera.");
+      showToast("Gagal memproses foto dari kamera.", 'error');
       setIsCameraOpen(false);
     }
   };
@@ -125,12 +127,12 @@ const SelfRegistration: React.FC = () => {
         performanceHistory: finalPerfHistory
       });
       setIsSubmitting(false);
-      alert('Data Anda berhasil dikirim. Terima kasih telah mendaftar.');
+      showToast('Data Anda berhasil dikirim. Terima kasih telah mendaftar.', 'success');
       navigate('/profiles');
     } catch (err: any) {
       console.error(err);
       setIsSubmitting(false);
-      alert('Gagal menyimpan data: ' + (err.message || 'Harap periksa izin akses Anda.'));
+      showToast('Gagal menyimpan data: ' + (err.message || 'Harap periksa izin akses Anda.'), 'error');
     }
   };
 

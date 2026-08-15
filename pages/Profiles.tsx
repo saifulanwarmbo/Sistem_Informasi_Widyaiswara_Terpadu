@@ -1,5 +1,7 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
+import { useSearchParams } from 'react-router-dom';
 import ProfileCard from '../components/ProfileCard';
 import { ICONS } from '../constants';
 import { WidyaiswaraProfile, JobTier, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
@@ -11,6 +13,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 
 
 const Profiles: React.FC = () => {
+  const { showToast } = useToast();
   const { profiles, deleteProfile, updateProfilePhoto, updateProfile } = useWidyaiswara();
   const { isLoggedIn, isAdmin, appUser } = useAuth();
   
@@ -20,6 +23,26 @@ const Profiles: React.FC = () => {
   const [editingProfile, setEditingProfile] = useState<WidyaiswaraProfile | null>(null);
   const [viewingProfile, setViewingProfile] = useState<WidyaiswaraProfile | null>(null);
   const [deletingProfile, setDeletingProfile] = useState<WidyaiswaraProfile | null>(null);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  React.useEffect(() => {
+    const id = searchParams.get('id');
+    if (id && profiles.length > 0) {
+      const profile = profiles.find(p => p.id === id);
+      if (profile) {
+        setViewingProfile(profile);
+      }
+    }
+  }, [searchParams, profiles]);
+
+  const handleCloseModal = () => {
+    setViewingProfile(null);
+    if (searchParams.has('id')) {
+      searchParams.delete('id');
+      setSearchParams(searchParams);
+    }
+  };
 
   const uniqueOrganizations = useMemo(() => {
     const orgs = new Set(profiles.map(p => p.organization).filter(Boolean));
@@ -42,14 +65,14 @@ const Profiles: React.FC = () => {
         await updateProfile(editingProfile.id, updatedData);
         setEditingProfile(null); // Close modal on save
       } catch (error: any) {
-        alert(error.message || "Gagal menyimpan perubahan. Silakan coba lagi.");
+        showToast(error.message || "Gagal menyimpan perubahan. Silakan coba lagi.", 'error');
       }
     }
   };
 
   const handleExportData = () => {
     if (!profiles || profiles.length === 0) {
-        alert("Tidak ada data untuk diekspor.");
+        showToast("Tidak ada data untuk diekspor.", 'error');
         return;
     }
 
@@ -216,7 +239,7 @@ const Profiles: React.FC = () => {
 
       <ProfileDetailModal 
         isOpen={!!viewingProfile}
-        onClose={() => setViewingProfile(null)}
+        onClose={handleCloseModal}
         profile={viewingProfile}
       />
 

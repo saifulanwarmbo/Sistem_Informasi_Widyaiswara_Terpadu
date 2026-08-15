@@ -21,23 +21,8 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
-        }
-      },
-      build: {
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-              'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-              'chart-vendor': ['recharts'],
-              'motion-vendor': ['motion']
-            }
-          }
         },
-        chunkSizeWarningLimit: 1000
-      },
-      optimizeDeps: {
-        include: ['react', 'react-dom', 'react-router-dom', 'firebase/app', 'firebase/auth', 'firebase/firestore', 'recharts', 'motion']
+        dedupe: ['react', 'react-dom']
       }
     };
 });

@@ -5,6 +5,7 @@ import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { WidyaiswaraProvider } from './contexts/WidyaiswaraContext';
 import { CompetencyProvider } from './contexts/CompetencyContext';
+import { ToastProvider } from './contexts/ToastContext';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const rootElement = document.getElementById('root');
@@ -16,6 +17,7 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ErrorBoundary>
+      <ToastProvider>
       <AuthProvider>
         <WidyaiswaraProvider>
           <CompetencyProvider>
@@ -23,6 +25,7 @@ root.render(
           </CompetencyProvider>
         </WidyaiswaraProvider>
       </AuthProvider>
+      </ToastProvider>
     </ErrorBoundary>
   </React.StrictMode>
 );

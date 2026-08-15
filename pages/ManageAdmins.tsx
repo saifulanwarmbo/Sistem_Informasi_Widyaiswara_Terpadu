@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useEffect, useState } from 'react';
 import { collection, query, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -6,6 +7,7 @@ import { AppUser, UserRole } from '../types';
 import { logAdminAction } from '../utils/auditLogger';
 
 const ManageAdmins: React.FC = () => {
+  const { showToast } = useToast();
     const { user: currentUser, isAdmin } = useAuth();
     const [users, setUsers] = useState<AppUser[]>([]);
     const [loading, setLoading] = useState(true);
@@ -42,13 +44,13 @@ const ManageAdmins: React.FC = () => {
     const toggleRole = async (user: AppUser) => {
         try {
             if (currentUser?.email !== 'saiful.anwarmbo@gmail.com') {
-                alert('Hanya admin utama yang dapat mengubah peran pengguna.');
+                showToast('Hanya admin utama yang dapat mengubah peran pengguna.', 'error');
                 return;
             }
 
             // Protect default admin from being demoted
             if (user.email === 'saiful.anwarmbo@gmail.com') {
-                alert('Admin utama tidak dapat diubah perannya.');
+                showToast('Admin utama tidak dapat diubah perannya.', 'error');
                 return;
             }
 
@@ -76,19 +78,19 @@ const ManageAdmins: React.FC = () => {
             ));
         } catch (err) {
             console.error("Error updating user role:", err);
-            alert('Gagal memperbarui peran pengguna.');
+            showToast('Gagal memperbarui peran pengguna.', 'error');
         }
     };
 
     const deleteUser = async (user: AppUser) => {
         try {
             if (currentUser?.email !== 'saiful.anwarmbo@gmail.com') {
-                alert('Hanya admin utama yang dapat menghapus pengguna.');
+                showToast('Hanya admin utama yang dapat menghapus pengguna.', 'error');
                 return;
             }
 
             if (user.email === 'saiful.anwarmbo@gmail.com') {
-                alert('Admin utama tidak dapat dihapus.');
+                showToast('Admin utama tidak dapat dihapus.', 'error');
                 return;
             }
 
@@ -112,7 +114,7 @@ const ManageAdmins: React.FC = () => {
             setUsers(prev => prev.filter(u => u.id !== user.id));
         } catch (err) {
             console.error("Error deleting user:", err);
-            alert('Gagal menghapus pengguna.');
+            showToast('Gagal menghapus pengguna.', 'error');
         }
     };
 

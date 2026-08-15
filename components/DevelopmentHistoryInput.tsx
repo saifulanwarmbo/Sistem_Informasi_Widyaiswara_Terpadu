@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React from 'react';
 import { DevelopmentHistoryItem } from '../types';
 import { ICONS } from '../constants';
@@ -8,6 +9,7 @@ interface DevelopmentHistoryInputProps {
 }
 
 const DevelopmentHistoryInput: React.FC<DevelopmentHistoryInputProps> = ({ history, onChange }) => {
+  const { showToast } = useToast();
 
   const handleAddItem = () => {
     const newItem: DevelopmentHistoryItem = {
@@ -30,7 +32,7 @@ const DevelopmentHistoryInput: React.FC<DevelopmentHistoryInputProps> = ({ histo
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (file.size > 500 * 1024) { // 500KB limit for Firestore document size constraints
-        alert("Ukuran file maksimal 500KB untuk menghindari error kapasitas penyimpanan (batas total dokumen profil adalah 1MB). Mohon kompres PDF Anda jika lebih besar.");
+        showToast("Ukuran file maksimal 500KB untuk menghindari error kapasitas penyimpanan (batas total dokumen profil adalah 1MB). Mohon kompres PDF Anda jika lebih besar.", 'error');
         return;
       }
       

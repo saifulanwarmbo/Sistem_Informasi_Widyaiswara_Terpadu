@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useState } from 'react';
 import { useCompetency } from '../contexts/CompetencyContext';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
@@ -7,6 +8,7 @@ import { CompetencyRegistration, RegistrationStatus } from '../types';
 import { logAdminAction } from '../utils/auditLogger';
 
 const VerifyCompetency: React.FC = () => {
+  const { showToast } = useToast();
   const { registrations, updateRegistrationStatus, deleteRegistration } = useCompetency();
   const { profiles } = useWidyaiswara();
   const { user: currentUser } = useAuth();
@@ -33,10 +35,10 @@ const VerifyCompetency: React.FC = () => {
       
       setSelectedReg(null);
       setAdminNotes('');
-      alert(`Status pendaftaran berhasil diperbarui menjadi ${status === 'verified' ? 'Disetujui' : 'Ditolak'}.`);
+      showToast(`Status pendaftaran berhasil diperbarui menjadi ${status === 'verified' ? 'Disetujui' : 'Ditolak'}.`, 'success');
     } catch (error) {
       console.error("Error updating status", error);
-      alert("Terjadi kesalahan saat memperbarui status.");
+      showToast("Terjadi kesalahan saat memperbarui status.", 'error');
     } finally {
       setIsUpdating(false);
     }
@@ -55,10 +57,10 @@ const VerifyCompetency: React.FC = () => {
             `Deleted competency registration for profile ${profileId}`
         );
       }
-      alert('Data pendaftaran berhasil dihapus.');
+      showToast('Data pendaftaran berhasil dihapus.', 'success');
     } catch (error) {
       console.error("Error deleting registration", error);
-      alert("Terjadi kesalahan saat menghapus data.");
+      showToast("Terjadi kesalahan saat menghapus data.", 'error');
     }
   };
 

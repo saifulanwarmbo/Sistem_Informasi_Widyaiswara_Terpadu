@@ -1,3 +1,4 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
@@ -9,6 +10,7 @@ import CameraCapture from '../components/CameraCapture';
 import { compressImage } from '../utils/imageCompression';
 
 const InputData: React.FC = () => {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const { addProfile } = useWidyaiswara();
 
@@ -66,21 +68,21 @@ const InputData: React.FC = () => {
       const file = e.target.files[0];
       
       if (file.size > 5 * 1024 * 1024) {
-        alert("Ukuran foto terlalu besar (maksimal 5MB sebelum kompresi).");
+        showToast("Ukuran foto terlalu besar (maksimal 5MB sebelum kompresi).", 'error');
         return;
       }
 
       try {
         const compressedBase64 = await compressImage(file, 200, 200, 0.6);
         if (compressedBase64.length > 150000) {
-           alert("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.");
+           showToast("Foto masih terlalu besar setelah dikompresi. Silakan gunakan foto lain.", 'error');
            return;
         }
         setPhotoPreview(compressedBase64);
         setPhotoUrl(compressedBase64);
       } catch (error) {
         console.error("Error compressing image:", error);
-        alert("Gagal memproses foto. Pastikan format file didukung (JPG/PNG).");
+        showToast("Gagal memproses foto. Pastikan format file didukung (JPG/PNG).", 'error');
       }
     }
   };
@@ -89,7 +91,7 @@ const InputData: React.FC = () => {
     try {
       const compressedBase64 = await compressImage(file, 200, 200, 0.6);
       if (compressedBase64.length > 150000) {
-         alert("Foto masih terlalu besar. Silakan coba lagi.");
+         showToast("Foto masih terlalu besar. Silakan coba lagi.", 'error');
          setIsCameraOpen(false);
          return;
       }
@@ -98,7 +100,7 @@ const InputData: React.FC = () => {
       setIsCameraOpen(false);
     } catch (error) {
       console.error("Error processing camera image:", error);
-      alert("Gagal memproses foto dari kamera.");
+      showToast("Gagal memproses foto dari kamera.", 'error');
       setIsCameraOpen(false);
     }
   };
@@ -136,12 +138,12 @@ const InputData: React.FC = () => {
       });
       setIsSubmitting(false);
       localStorage.removeItem('siwita_input_draft');
-      alert('Data Widyaiswara berhasil ditambahkan!');
+      showToast('Data Widyaiswara berhasil ditambahkan!', 'success');
       navigate('/profiles');
     } catch (err: any) {
       console.error(err);
       setIsSubmitting(false);
-      alert('Gagal menambahkan data: ' + (err.message || 'Harap periksa izin akses Anda.'));
+      showToast('Gagal menambahkan data: ' + (err.message || 'Harap periksa izin akses Anda.'), 'error');
     }
   };
 

@@ -4,10 +4,43 @@ import { motion } from 'motion/react';
 import DashboardCard from '../components/DashboardCard';
 import { ICONS } from '../constants';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
+import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { JobTier } from '../types';
 
 const Dashboard: React.FC = () => {
     const { profiles, organizations } = useWidyaiswara();
+    const { user } = useAuth();
+
+    const currentUserProfile = useMemo(() => {
+        return profiles.find(p => p.ownerId === user?.uid);
+    }, [profiles, user]);
+
+    const profileCompleteness = useMemo(() => {
+        if (!currentUserProfile) return null;
+
+        const checks = [
+            { label: 'Informasi Dasar', isComplete: !!(currentUserProfile.nip && currentUserProfile.niwn && currentUserProfile.organization) },
+            { label: 'Kontak WhatsApp', isComplete: !!currentUserProfile.whatsappNumber },
+            { label: 'Riwayat Kenaikan Jenjang', isComplete: !!(currentUserProfile.promotionHistory && currentUserProfile.promotionHistory.length > 0) },
+            { label: 'Riwayat Sertifikasi Pengampuan', isComplete: !!(currentUserProfile.developmentHistory && currentUserProfile.developmentHistory.length > 0) },
+            { label: 'Riwayat Kompetensi', isComplete: !!(currentUserProfile.performanceHistory && currentUserProfile.performanceHistory.length > 0) },
+        ];
+
+        const completed = checks.filter(c => c.isComplete).length;
+        const total = checks.length;
+        const percentage = Math.round((completed / total) * 100);
+
+        return {
+            percentage,
+            checks
+        };
+    }, [currentUserProfile]);
+
+
+
+
+
 
     const totalWidyaiswara = profiles.length;
     const totalOrganizations = organizations.filter(org => org.total > 0).length;
@@ -83,6 +116,42 @@ const Dashboard: React.FC = () => {
             initial="hidden"
             animate="show"
         >
+            {/* Profile Completion Widget */}
+            {profileCompleteness && profileCompleteness.percentage < 100 && (
+                <motion.div variants={itemVariants} className="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-800">Lengkapi Profil Anda</h3>
+                            <p className="text-sm text-gray-500">Profil yang lengkap membantu validasi kompetensi Anda.</p>
+                        </div>
+                        <span className="mt-2 md:mt-0 px-3 py-1 bg-yellow-100 text-yellow-800 font-semibold rounded-full text-sm">
+                            {profileCompleteness.percentage}% Selesai
+                        </span>
+                    </div>
+                    
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                        <div className="bg-yellow-500 h-2.5 rounded-full transition-all duration-1000 ease-in-out" style={{ width: `${profileCompleteness.percentage}%` }}></div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                        {profileCompleteness.checks.map((check, index) => (
+                            <div key={index} className="flex items-center text-sm">
+                                {check.isComplete ? (
+                                    <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                                ) : (
+                                    <svg className="w-5 h-5 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                )}
+                                <span className={check.isComplete ? "text-gray-700" : "text-gray-500"}>{check.label}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <Link to="/input-data" className="inline-block mt-2 px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary transition-colors text-sm font-medium shadow-sm">
+                        Lengkapi Sekarang
+                    </Link>
+                </motion.div>
+            )}
+
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <DashboardCard title="Total Widyaiswara" value={totalWidyaiswara.toString()} icon={ICONS.users} color="bg-blue-500" />

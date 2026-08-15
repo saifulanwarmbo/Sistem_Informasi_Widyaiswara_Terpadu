@@ -1,4 +1,6 @@
+import { useToast } from '../contexts/ToastContext';
 import React, { useEffect, useState } from 'react';
+import QRCode from 'react-qr-code';
 import { WidyaiswaraProfile, JobTier, DevelopmentHistoryItem, PerformanceHistoryItem } from '../types';
 import { useWidyaiswara } from '../contexts/WidyaiswaraContext';
 
@@ -9,10 +11,13 @@ interface ProfileDetailModalProps {
 }
 
 const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose, profile }) => {
+  const { showToast } = useToast();
   const { getDocument } = useWidyaiswara();
   const [loadingDocId, setLoadingDocId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewType, setPreviewType] = useState<'image' | 'pdf' | null>(null);
+  const [showQR, setShowQR] = useState(false);
+  const profileUrl = `${window.location.origin}/#/profiles?id=${profile?.id}`;
 
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
@@ -54,7 +59,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     setLoadingDocId(null);
     
     if (!base64Data) {
-        alert("Dokumen tidak ditemukan atau terjadi kesalahan.");
+        showToast("Dokumen tidak ditemukan atau terjadi kesalahan.", 'error');
         return;
     }
     
@@ -82,7 +87,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
       setPreviewType(mime.includes('image') ? 'image' : 'pdf');
       setPreviewUrl(url);
     } catch (e) {
-      alert("Tidak dapat membuka dokumen.");
+      showToast("Tidak dapat membuka dokumen.", 'error');
     }
   };
 
@@ -177,7 +182,17 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
           <div className="p-5 border-b flex justify-between items-center sticky top-0 bg-white rounded-t-lg print:border-none print:p-0 print:mb-6">
             <h3 id="profile-detail-title" className="text-2xl font-bold text-primary print:text-3xl print:text-black">{profile.name} - Profil Lengkap</h3>
             <div className="flex items-center gap-4 print-hidden">
-               <button 
+              <button 
+                onClick={() => setShowQR(true)} 
+                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                aria-label="QR Code Profil"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                </svg>
+                QR Code
+              </button>
+              <button 
                 onClick={handlePrint} 
                 className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-accent border border-accent rounded-md hover:bg-accent hover:text-white transition-colors"
                 aria-label="Cetak Profil"
@@ -291,6 +306,70 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
                             <iframe src={previewUrl} className="w-full h-full border-none shadow-sm bg-white" title="Pratinjau PDF" />
                         )}
                     </div>
+                </div>
+            </div>
+        )}
+
+        {showQR && (
+            <div className="fixed inset-0 z-[105] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 print:hidden" onClick={() => setShowQR(false)}>
+                <div 
+                    className="bg-white rounded-xl w-full max-w-sm flex flex-col shadow-2xl overflow-hidden relative p-8 items-center text-center space-y-6"
+                    onClick={e => e.stopPropagation()}
+                >
+                    <button onClick={() => setShowQR(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <div>
+                        <h3 className="text-xl font-bold text-gray-800">QR Code Profil</h3>
+                        <p className="text-sm text-gray-500 mt-1">Scan untuk melihat profil publik</p>
+                    </div>
+                    
+                    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100" id="qr-code-container">
+                        <QRCode value={profileUrl} size={200} level="H" />
+                    </div>
+
+                    <div className="space-y-1">
+                        <p className="font-semibold text-gray-800">{profile.name}</p>
+                        <p className="text-sm text-primary">{profile.tier}</p>
+                    </div>
+
+                    <button 
+                        onClick={() => {
+                            const printContent = document.getElementById('qr-code-container')?.innerHTML;
+                            if (printContent) {
+                                const printWindow = window.open('', '_blank');
+                                if (printWindow) {
+                                    printWindow.document.write(`
+                                        <html>
+                                            <head>
+                                                <title>QR Code - ${profile.name}</title>
+                                                <style>
+                                                    body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
+                                                    .name { font-size: 24px; font-weight: bold; margin-top: 20px; }
+                                                    .tier { font-size: 18px; color: #666; margin-top: 5px; }
+                                                </style>
+                                            </head>
+                                            <body>
+                                                ${printContent}
+                                                <div class="name">${profile.name}</div>
+                                                <div class="tier">${profile.tier}</div>
+                                                <script>window.onload = function() { window.print(); window.close(); }</script>
+                                            </body>
+                                        </html>
+                                    `);
+                                    printWindow.document.close();
+                                }
+                            }
+                        }} 
+                        className="w-full flex justify-center items-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-primary rounded-lg hover:bg-secondary transition-all shadow-md"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                        </svg>
+                        Cetak QR Code
+                    </button>
                 </div>
             </div>
         )}
