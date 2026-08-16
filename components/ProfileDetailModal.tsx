@@ -144,30 +144,18 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
     <>
       <style type="text/css" media="print">
         {`
-          body * {
-            visibility: hidden;
-          }
-          #profile-detail-modal-root, #profile-detail-modal-root * {
-            visibility: visible;
-          }
-          #profile-detail-modal-root {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: auto;
-            max-height: none;
-            overflow: visible;
-            box-shadow: none;
-            background: white;
-          }
           .print-hidden {
             display: none !important;
+          }
+          @page {
+            margin: 0;
+            margin-top: 1cm;
+            margin-bottom: 1cm;
           }
         `}
       </style>
       <div 
-          className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4 transition-opacity duration-300 print:absolute print:inset-0 print:bg-white print:p-0" 
+          className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4 transition-opacity duration-300 print:static print:bg-transparent print:p-0 print:block" 
           role="dialog" 
           aria-modal="true" 
           aria-labelledby="profile-detail-title"
@@ -175,7 +163,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
       >
         <div 
           id="profile-detail-modal-root"
-          className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col print:shadow-none print:w-full print:max-w-none print:h-auto print:max-h-none print:block"
+          className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col print:shadow-none print:w-full print:max-w-none print:h-auto print:max-h-none print:block print:m-0"
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}

@@ -48,7 +48,7 @@ const App: React.FC = () => {
                       onClick={() => setIsSidebarOpen(false)}
                     />
                   )}
-                  <main className="flex-1 overflow-x-hidden overflow-y-auto bg-light-bg p-4 md:p-8">
+                  <main className="flex-1 overflow-x-hidden overflow-y-auto bg-light-bg p-4 md:p-8 print:p-0 print:bg-white print:overflow-visible">
                     <Suspense fallback={<LoadingFallback />}>
                       <Routes>
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />

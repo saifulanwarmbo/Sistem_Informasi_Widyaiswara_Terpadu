@@ -155,7 +155,17 @@ const Profiles: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="flex justify-between items-center print:hidden">
+        <h1 className="text-2xl font-bold text-gray-800">Direktori Widyaiswara</h1>
+        <button 
+            onClick={() => window.print()}
+            className="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition-colors shadow-sm"
+        >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span>Cetak Direktori</span>
+        </button>
+      </div>
+      <div className="bg-white p-4 rounded-lg shadow-md print:hidden">
         <div className="flex flex-col md:flex-row gap-4 items-center">
           <div className="relative flex-grow w-full">
             <input
@@ -203,7 +213,7 @@ const Profiles: React.FC = () => {
 
       {filteredProfiles.length > 0 ? (
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${viewingProfile ? 'print:hidden' : ''}`}
           variants={containerVariants}
           initial="hidden"
           animate="show"
