@@ -1,5 +1,5 @@
 import React from 'react';
-import logoLan from '../assets/logo-lan.png';
+const logoLan = '/logo-lan.png';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { ICONS } from '../constants';
 import { useAuth } from '../contexts/AuthContext';
@@ -55,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
         <div className="w-full flex justify-center mb-2 mt-2">
-          <img src={logoLan} alt="Logo LAN RI" className="h-14 w-auto object-contain" />
+          <img src={logoLan} alt="Logo LAN RI" fetchPriority="high" loading="eager" className="h-14 w-auto object-contain" />
         </div>
         <h1 className="text-xl font-extrabold tracking-wider text-center text-primary mt-2">SIWITA</h1>
       </div>
