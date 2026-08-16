@@ -1,8 +1,18 @@
 import { initializeApp } from 'firebase/app';
-import { initializeFirestore } from 'firebase/firestore';
-import firebaseConfig from './firebase-applet-config.json';
+import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import fs from 'fs';
 
-const app = initializeApp(firebaseConfig);
-const db = initializeFirestore(app, {
-  experimentalAutoDetectLongPolling: true
-}, firebaseConfig.firestoreDatabaseId);
+const config = JSON.parse(fs.readFileSync('./firebase-applet-config.json', 'utf8'));
+const app = initializeApp(config);
+const db = getFirestore(app, config.firestoreDatabaseId);
+
+async function testConnection() {
+  try {
+    console.log("Testing connection...");
+    await getDocFromServer(doc(db, 'test', 'connection'));
+    console.log("Connection successful or got a normal permission error.");
+  } catch (error: any) {
+    console.error("Error:", error.code, error.message);
+  }
+}
+testConnection();
