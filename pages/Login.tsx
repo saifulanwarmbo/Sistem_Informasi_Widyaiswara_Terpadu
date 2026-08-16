@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 const logoLan = '/logo-lan.png';
-import bgLan from '../assets/lan_building_bg.jpg';
+const bgLan = '/lan_building_bg.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { FirebaseError } from 'firebase/app';
