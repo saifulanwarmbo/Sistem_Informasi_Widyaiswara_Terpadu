@@ -124,3 +124,12 @@ export interface Agenda {
   location: string;
   createdAt: number;
 }
+export interface CopEvent {
+  id: string;
+  title: string;
+  description: string;
+  date: number; // timestamp
+  location: string;
+  speaker?: string;
+  createdAt: number;
+}

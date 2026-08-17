@@ -10,6 +10,7 @@ const Profiles = lazy(() => import('./pages/Profiles'));
 const JobTiers = lazy(() => import('./pages/JobTiers'));
 const Organizations = lazy(() => import('./pages/Organizations'));
 const DevelopmentHub = lazy(() => import('./pages/DevelopmentHub'));
+const CommunityOfPractices = lazy(() => import('./pages/CommunityOfPractices'));
 const Login = lazy(() => import('./pages/Login'));
 const InputData = lazy(() => import('./pages/InputData'));
 const SelfRegistration = lazy(() => import('./pages/SelfRegistration'));
@@ -57,6 +58,7 @@ const App: React.FC = () => {
                         <Route path="/job-tiers" element={<JobTiers />} />
                         <Route path="/organizations" element={<Organizations />} />
                         <Route path="/development-hub" element={<DevelopmentHub />} />
+                        <Route path="/community-of-practices" element={<CommunityOfPractices />} />
                         
                         <Route path="/self-registration" element={<SelfRegistration />} />
                         

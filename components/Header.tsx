@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCompetency } from '../contexts/CompetencyContext';
 import { ICONS } from '../constants';
-const logoLan = '/logo-lan.png';
+import logoLan from '../assets/logo-lan.png';
 
 
 interface HeaderProps {
@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           </svg>
         </button>
         <div className="flex items-center gap-3">
-            <img src={logoLan} alt="Logo LAN RI" fetchPriority="high" loading="eager" className="h-10 w-auto object-contain md:hidden" />
+            <img src={logoLan} onError={(e) => { e.currentTarget.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/1554355505_Logo-LAN-Baru-Transparan.png/320px-1554355505_Logo-LAN-Baru-Transparan.png"; e.currentTarget.onerror = null; }} alt="Logo LAN RI" fetchPriority="high" loading="eager" className="h-10 w-auto object-contain md:hidden" />
             <h2 className="text-xl font-bold text-gray-800 hidden lg:block whitespace-nowrap overflow-hidden text-ellipsis">Sistem Informasi Widyaiswara Indonesia Terpadu</h2>
             <h2 className="text-xl font-bold text-gray-800 hidden sm:block lg:hidden">SIWITA</h2>
         </div>

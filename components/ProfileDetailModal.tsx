@@ -148,9 +148,7 @@ const ProfileDetailModal: React.FC<ProfileDetailModalProps> = ({ isOpen, onClose
             display: none !important;
           }
           @page {
-            margin: 0;
-            margin-top: 1cm;
-            margin-bottom: 1cm;
+            margin: 1.5cm 2cm;
           }
         `}
       </style>

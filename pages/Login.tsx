@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-const logoLan = '/logo-lan.png';
+import logoLan from '../assets/logo-lan.png';
 const bgLan = '/lan_building_bg.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -72,7 +72,7 @@ const Login: React.FC = () => {
           <div className="flex justify-center mb-8 relative">
             {/* Soft glow behind the logo */}
             <div className="absolute inset-0 bg-white/60 blur-3xl rounded-full scale-[2.0] -z-10"></div>
-            <img src={logoLan} alt="Logo LAN RI" fetchPriority="high" loading="eager" className="relative h-28 md:h-32 w-auto object-contain" />
+            <img src={logoLan} onError={(e) => { e.currentTarget.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/1554355505_Logo-LAN-Baru-Transparan.png/320px-1554355505_Logo-LAN-Baru-Transparan.png"; e.currentTarget.onerror = null; }} alt="Logo LAN RI" fetchPriority="high" loading="eager" className="relative h-28 md:h-32 w-auto object-contain" />
           </div>
           <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight">
             Login <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary to-blue-600">SIWITA</span>

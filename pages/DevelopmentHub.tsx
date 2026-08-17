@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, onSnapshot, doc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
-import { DevelopmentResource, Agenda } from '../types';
+import { DevelopmentResource, Agenda, CopEvent } from '../types';
 import { logAdminAction } from '../utils/auditLogger';
 
 const DevelopmentHub: React.FC = () => {
@@ -12,6 +12,7 @@ const DevelopmentHub: React.FC = () => {
     
     const [resources, setResources] = useState<DevelopmentResource[]>([]);
     const [agendas, setAgendas] = useState<Agenda[]>([]);
+    const [copEvents, setCopEvents] = useState<Agenda[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Modal state for Resource
@@ -37,12 +38,30 @@ const DevelopmentHub: React.FC = () => {
             const data: Agenda[] = [];
             snapshot.forEach(doc => data.push(doc.data() as Agenda));
             setAgendas(data);
+        });
+
+        const copQuery = query(collection(db, 'cop_events'), orderBy('date', 'asc'));
+        const unsubscribeCop = onSnapshot(copQuery, (snapshot) => {
+            const data: Agenda[] = [];
+            snapshot.forEach(doc => {
+                const cop = doc.data() as CopEvent;
+                data.push({
+                    id: cop.id,
+                    title: `[CoP] ${cop.title}`,
+                    date: cop.date,
+                    location: cop.location,
+                    createdAt: cop.createdAt,
+                    isCop: true // internal marker if needed
+                } as Agenda & { isCop: boolean });
+            });
+            setCopEvents(data);
             setLoading(false);
         });
 
         return () => {
             unsubscribeResources();
             unsubscribeAgendas();
+            unsubscribeCop();
         };
     }, []);
 
@@ -233,13 +252,13 @@ const DevelopmentHub: React.FC = () => {
                     )}
                 </div>
                 
-                {agendas.length === 0 ? (
+                {([...agendas, ...copEvents]).length === 0 ? (
                     <div className="text-center p-8 text-gray-500">
                         Belum ada agenda mendatang.
                     </div>
                 ) : (
                     <ul className="space-y-4">
-                        {agendas.map((agenda) => {
+                        {[...agendas, ...copEvents].sort((a,b) => a.date - b.date).map((agenda) => {
                             const dateObj = new Date(agenda.date);
                             const day = dateObj.getDate();
                             const month = dateObj.toLocaleDateString('id-ID', { month: 'short' }).toUpperCase();
@@ -258,12 +277,16 @@ const DevelopmentHub: React.FC = () => {
                                     </div>
                                     {isAdmin && (
                                         <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button onClick={() => openEditAgenda(agenda)} className="text-gray-500 hover:text-primary">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" /></svg>
-                                            </button>
-                                            <button onClick={() => handleDeleteAgenda(agenda.id, agenda.title)} className="text-gray-500 hover:text-red-500">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                            </button>
+                                            {!(agenda as any).isCop && (
+                                            <>
+                                                <button onClick={() => openEditAgenda(agenda)} className="text-gray-500 hover:text-primary">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" /></svg>
+                                                </button>
+                                                <button onClick={() => handleDeleteAgenda(agenda.id, agenda.title)} className="text-gray-500 hover:text-red-500">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                </button>
+                                            </>
+                                        )}
                                         </div>
                                     )}
                                 </li>
