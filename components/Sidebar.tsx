@@ -6,21 +6,21 @@ import { useAuth } from '../contexts/AuthContext';
 
 
 const navItems = [
-  { path: '/dashboard', label: 'Dashboard', icon: ICONS.dashboard },
-  { path: '/profiles', label: 'Profil Widyaiswara', icon: ICONS.profiles },
-  { path: '/self-registration', label: 'Registrasi Mandiri', icon: ICONS.selfRegister },
-  { path: '/job-tiers', label: 'Jenjang Jabatan', icon: ICONS.tiers },
-  { path: '/organizations', label: 'Instansi', icon: ICONS.organizations },
-  { path: '/development-hub', label: 'Pengembangan Profesi', icon: ICONS.development },
-  { path: '/community-of-practices', label: 'Community of Practices', icon: ICONS.users },
-  { path: '/competency-test', label: 'Uji Kompetensi', icon: ICONS.document },
+  { path: '/dashboard', label: 'Dashboard', icon: ICONS.dashboard, tooltip: 'Ringkasan statistik dan metrik data Widyaiswara' },
+  { path: '/profiles', label: 'Profil Widyaiswara', icon: ICONS.profiles, tooltip: 'Direktori pencarian dan detail profil Widyaiswara' },
+  { path: '/self-registration', label: 'Registrasi Mandiri', icon: ICONS.selfRegister, tooltip: 'Pendaftaran mandiri profil Widyaiswara baru' },
+  { path: '/job-tiers', label: 'Jenjang Jabatan', icon: ICONS.tiers, tooltip: 'Distribusi dan statistik Widyaiswara berdasarkan jenjang' },
+  { path: '/organizations', label: 'Instansi', icon: ICONS.organizations, tooltip: 'Sebaran dan metrik Widyaiswara per instansi' },
+  { path: '/development-hub', label: 'Pengembangan Profesi', icon: ICONS.development, tooltip: 'Informasi program pengembangan dan pelatihan profesi' },
+  { path: '/community-of-practices', label: 'Community of Practices', icon: ICONS.users, tooltip: 'Wadah kolaborasi dan komunitas praktik' },
+  { path: '/competency-test', label: 'Uji Kompetensi', icon: ICONS.document, tooltip: 'Informasi dan pendaftaran uji kompetensi' },
 ];
 
 const adminNavItems = [
-    { path: '/input-data', label: 'Input Data', icon: ICONS.inputData },
-    { path: '/verify-competency', label: 'Verifikasi Uji Kompetensi', icon: ICONS.document },
-    { path: '/manage-admins', label: 'Kelola Admin', icon: ICONS.users },
-    { path: '/audit-logs', label: 'Log Audit', icon: ICONS.chart },
+    { path: '/input-data', label: 'Input Data', icon: ICONS.inputData, tooltip: 'Kelola dan masukkan data master Widyaiswara' },
+    { path: '/verify-competency', label: 'Verifikasi Uji Kompetensi', icon: ICONS.document, tooltip: 'Tinjau dan verifikasi pengajuan uji kompetensi' },
+    { path: '/manage-admins', label: 'Kelola Admin', icon: ICONS.users, tooltip: 'Pengaturan hak akses dan daftar administrator' },
+    { path: '/audit-logs', label: 'Log Audit', icon: ICONS.chart, tooltip: 'Pantau riwayat aktivitas dan perubahan sistem' },
 ];
 
 interface SidebarProps {
@@ -42,16 +42,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     if (window.innerWidth < 768) setIsOpen(false);
   };
 
-  const linkClasses = "flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-primary transition-colors duration-200 rounded-md";
+  const linkClasses = "flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-primary dark:hover:text-blue-400 transition-colors duration-200 rounded-md";
   const activeLinkClasses = "bg-blue-100 text-primary border-l-4 border-primary rounded-none font-semibold";
 
   return (
     <div className={`
-      fixed inset-y-0 left-0 z-30 w-64 bg-white text-gray-800 border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col
+      fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out flex flex-col
       md:relative md:translate-x-0
       ${isOpen ? 'translate-x-0' : '-translate-x-full'}
     `}>
-      <div className="flex flex-col items-center justify-center px-4 py-6 border-b border-gray-200 relative">
+      <div className="flex flex-col items-center justify-center px-4 py-6 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700 relative">
         <button onClick={() => setIsOpen(false)} className="md:hidden absolute top-4 right-4 text-gray-500 hover:text-gray-800 focus:outline-none">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
@@ -66,6 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           <NavLink key={item.path}
             to={item.path}
             onClick={handleLinkClick}
+            title={item.tooltip}
             className={({ isActive }) => `${linkClasses} ${isActive ? activeLinkClasses : ''}`}
           >
             {item.icon}
@@ -75,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
         {isLoggedIn && isAdmin && (
             <>
-                <hr className="my-3 border-gray-200"/>
+                <hr className="my-3 border-gray-200 dark:border-gray-700 dark:border-gray-700"/>
                 <p className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Admin Menu</p>
                 {adminNavItems.map(item => (
                      <NavLink key={item.path}
@@ -91,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         )}
       </nav>
 
-       <div className="px-4 py-4 border-t border-gray-200">
+       <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700 dark:border-gray-700">
           {isLoggedIn && (
              <button onClick={handleLogout} className="w-full text-left flex items-center px-2 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-md transition-colors duration-200">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>

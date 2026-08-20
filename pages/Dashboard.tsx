@@ -8,8 +8,70 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { JobTier } from '../types';
 
+
+const SkeletonDashboard = () => (
+    <div className="space-y-8 animate-pulse print:hidden">
+        <div className="flex justify-between items-center">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 md:w-1/4"></div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+        </div>
+        
+        {/* Profile Completion Skeleton */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-gray-300 dark:border-gray-600">
+            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-6"></div>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-6"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>)}
+            </div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-32 mt-4"></div>
+        </div>
+
+        {/* Stats Cards Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+                <div key={i} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center">
+                    <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-700 mr-4"></div>
+                    <div className="flex-1">
+                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                </div>
+            ))}
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map(i => (
+                <div key={i} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex items-center">
+                    <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 mr-4"></div>
+                    <div className="flex-1">
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                </div>
+            ))}
+        </div>
+
+        {/* Charts Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {[1, 2].map(i => (
+                <div key={i} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md h-[400px] flex flex-col">
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-6"></div>
+                    <div className="flex-1 flex justify-center items-center">
+                        {i === 1 ? (
+                            <div className="h-48 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                        ) : (
+                            <div className="w-full h-full bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        )}
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
 const Dashboard: React.FC = () => {
-    const { profiles, organizations } = useWidyaiswara();
+    const { profiles, organizations, isLoading } = useWidyaiswara();
     const { user } = useAuth();
 
     const currentUserProfile = useMemo(() => {
@@ -109,6 +171,10 @@ const Dashboard: React.FC = () => {
         show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
     };
 
+    if (isLoading) {
+        return <SkeletonDashboard />;
+    }
+
     return (
         <motion.div 
             className="space-y-8"
@@ -117,7 +183,7 @@ const Dashboard: React.FC = () => {
             animate="show"
         >
             <div className="flex justify-between items-center print:hidden">
-                <h1 className="text-2xl font-bold text-gray-800">Dashboard Statistik</h1>
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Dashboard Statistik</h1>
                 <button 
                     onClick={() => window.print()}
                     className="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-secondary transition-colors shadow-sm"
@@ -128,18 +194,18 @@ const Dashboard: React.FC = () => {
             </div>
             {/* Profile Completion Widget */}
             {profileCompleteness && profileCompleteness.percentage < 100 && (
-                <motion.div variants={itemVariants} className="bg-white p-6 rounded-lg shadow-md border-l-4 border-yellow-500 print:hidden">
+                <motion.div variants={itemVariants} className="bg-white dark:bg-gray-800 p-6 rounded-lg transition-colors duration-200 shadow-md border-l-4 border-yellow-500 print:hidden">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                         <div>
-                            <h3 className="text-lg font-bold text-gray-800">Lengkapi Profil Anda</h3>
-                            <p className="text-sm text-gray-500">Profil yang lengkap membantu validasi kompetensi Anda.</p>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Lengkapi Profil Anda</h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Profil yang lengkap membantu validasi kompetensi Anda.</p>
                         </div>
                         <span className="mt-2 md:mt-0 px-3 py-1 bg-yellow-100 text-yellow-800 font-semibold rounded-full text-sm">
                             {profileCompleteness.percentage}% Selesai
                         </span>
                     </div>
                     
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-6">
                         <div className="bg-yellow-500 h-2.5 rounded-full transition-all duration-1000 ease-in-out" style={{ width: `${profileCompleteness.percentage}%` }}></div>
                     </div>
 
@@ -149,9 +215,9 @@ const Dashboard: React.FC = () => {
                                 {check.isComplete ? (
                                     <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                                 ) : (
-                                    <svg className="w-5 h-5 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <svg className="w-5 h-5 text-gray-400 dark:text-gray-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 )}
-                                <span className={check.isComplete ? "text-gray-700" : "text-gray-500"}>{check.label}</span>
+                                <span className={check.isComplete ? "text-gray-700 dark:text-gray-300" : "text-gray-500 dark:text-gray-400"}>{check.label}</span>
                             </div>
                         ))}
                     </div>
@@ -179,7 +245,7 @@ const Dashboard: React.FC = () => {
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Tier Distribution Pie Chart */}
-                <motion.div variants={itemVariants} className="bg-white p-6 rounded-lg shadow-md">
+                <motion.div variants={itemVariants} className="bg-white dark:bg-gray-800 p-6 rounded-lg transition-colors duration-200 shadow-md">
                     <h3 className="text-lg font-semibold mb-4">Distribusi Jenjang Jabatan</h3>
                     <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
@@ -203,10 +269,10 @@ const Dashboard: React.FC = () => {
                 </motion.div>
 
                 {/* Organization Bar Chart */}
-                <motion.div variants={itemVariants} className="bg-white p-6 rounded-lg shadow-md flex flex-col">
+                <motion.div variants={itemVariants} className="bg-white dark:bg-gray-800 p-6 rounded-lg transition-colors duration-200 shadow-md flex flex-col">
                     <h3 className="text-lg font-semibold mb-4">Top 5 Instansi dengan Widyaiswara Terbanyak</h3>
                     <div className="flex-1 min-h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                             <BarChart layout="vertical" data={organizationData} margin={{ top: 20, right: 30, left: 100, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis type="number" />

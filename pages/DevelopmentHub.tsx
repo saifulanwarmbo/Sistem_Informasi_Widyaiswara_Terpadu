@@ -56,6 +56,9 @@ const DevelopmentHub: React.FC = () => {
             });
             setCopEvents(data);
             setLoading(false);
+        }, (error) => {
+            console.error("CoP devhub fetch error:", error);
+            setLoading(false);
         });
 
         return () => {

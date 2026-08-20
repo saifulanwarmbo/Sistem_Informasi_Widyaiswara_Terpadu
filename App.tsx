@@ -26,11 +26,12 @@ const LoadingFallback = () => (
 );
 
 const App: React.FC = () => {
+  console.log('APP RENDERED');
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   return (
     <HashRouter>
-      <div className="flex h-screen bg-light-bg text-dark-text font-sans">
+      <div className="flex h-screen bg-light-bg dark:bg-gray-900 text-dark-text dark:text-gray-100 font-sans transition-colors duration-200">
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
             {/* Login route has no sidebar/header */}
@@ -49,7 +50,7 @@ const App: React.FC = () => {
                       onClick={() => setIsSidebarOpen(false)}
                     />
                   )}
-                  <main className="flex-1 overflow-x-hidden overflow-y-auto bg-light-bg p-4 md:p-8 print:p-0 print:bg-white print:overflow-visible">
+                  <main className="flex-1 overflow-x-hidden overflow-y-auto bg-light-bg dark:bg-gray-900 p-4 md:p-8 print:p-0 print:bg-white print:overflow-visible transition-colors duration-200">
                     <Suspense fallback={<LoadingFallback />}>
                       <Routes>
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />

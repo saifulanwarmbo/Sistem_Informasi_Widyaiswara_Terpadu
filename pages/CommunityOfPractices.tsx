@@ -25,6 +25,9 @@ const CommunityOfPractices: React.FC = () => {
             snapshot.forEach(doc => data.push(doc.data() as CopEvent));
             setEvents(data);
             setLoading(false);
+        }, (error) => {
+            console.error("CoP fetch error:", error);
+            setLoading(false);
         });
         return () => unsubscribe();
     }, []);

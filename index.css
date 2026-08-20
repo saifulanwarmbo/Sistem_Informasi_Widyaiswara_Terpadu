@@ -110,3 +110,5 @@
     background: transparent !important;
   }
 }
+
+@custom-variant dark (&:where(.dark, .dark *));

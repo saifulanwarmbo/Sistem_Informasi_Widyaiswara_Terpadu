@@ -1,10 +1,9 @@
-import re
+import os
 
 with open('vite.config.ts', 'r') as f:
     content = f.read()
 
-# remove optimizeDeps
-content = re.sub(r",\s*optimizeDeps: \{\s*include: \[[^\]]+\]\s*\}", "", content)
+content = content.replace("JSON.stringify(env.GEMINI_API_KEY)", "JSON.stringify(env.GEMINI_API_KEY || '')")
 
 with open('vite.config.ts', 'w') as f:
     f.write(content)

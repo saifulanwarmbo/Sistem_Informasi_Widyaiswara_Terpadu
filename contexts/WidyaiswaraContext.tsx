@@ -65,6 +65,7 @@ const calculateOrganizations = (profiles: WidyaiswaraProfile[], initialOrgs: Org
 
 interface WidyaiswaraContextType {
   profiles: WidyaiswaraProfile[];
+  isLoading: boolean;
   organizations: Organization[];
   addProfile: (profile: Omit<WidyaiswaraProfile, 'id' | 'createdAt' | 'ownerId'>) => Promise<void>;
   deleteProfile: (id: string) => Promise<void>;
@@ -78,6 +79,7 @@ const WidyaiswaraContext = createContext<WidyaiswaraContextType | undefined>(und
 
 export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [profiles, setProfiles] = useState<WidyaiswaraProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { user, isLoggedIn, isAdmin } = useAuth();
 
   useEffect(() => {
@@ -87,7 +89,9 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
         loadedProfiles.push({ id: doc.id, ...doc.data() } as WidyaiswaraProfile);
       });
       setProfiles(loadedProfiles);
+      setIsLoading(false);
     }, (error) => {
+      setIsLoading(false);
       console.error("Error fetching profiles:", error);
     });
 
@@ -238,6 +242,7 @@ export const WidyaiswaraProvider: React.FC<{ children: ReactNode }> = ({ childre
   const value = useMemo(() => ({
     profiles,
     organizations,
+    isLoading,
     addProfile,
     deleteProfile,
     clearAllProfiles,
